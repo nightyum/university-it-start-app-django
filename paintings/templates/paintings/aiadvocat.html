@@ -1,0 +1,180 @@
+{% extends 'paintings/base.html' %}
+
+{% block title %}
+{{ title }}
+{% endblock %}
+
+{% block content %}
+<h1 class="page-title">ИИ адвокат</h1>
+
+<div class="chat-layout">
+
+    <!-- ИСТОРИЯ -->
+    <div class="history-panel">
+
+        {% if user_authenticated %}
+            {% for item in history reversed %}
+
+            <div class="history-item">
+                <p><b>Вы:</b> {{ item.question }}</p>
+
+                <p>
+                    <b>ИИ адвокат:</b> {{ item.answer }}
+                    <i>Точность: {{ item.accuracy }}%</i>
+                </p>
+
+                <p class="history-time">
+                    <b>Время: {{item.time}}</b>
+                </p>
+
+                {% if item.laws %}
+                    {% for law in item.laws %}
+                        <a href="{{ law.external_link }}" target="_blank">[Внешняя] {{ law.title }}</a> <br>
+                        <a href="{{ law.internal_link }}">[Внутренняя] {{ law.title }}</a>
+                        <hr>
+                    {% endfor %}
+                {% endif %}
+            </div>
+
+            {% endfor %}
+        {% else %}
+            <p><i>Войдите в систему, чтобы сохранять историю чата.</i></p>
+        {% endif %}
+
+    </div>
+
+
+    <!-- ЧАТ -->
+    <div class="chat-panel">
+
+        <div id="chat-window" class="chat-window">
+            <!-- Здесь будут сообщения -->
+        </div>
+
+        <form id="chat-form" class="chat-form">
+            {% csrf_token %}
+            <input type="text" id="question" placeholder="Введите вопрос" required>
+            <button type="submit" class="law-btn-primary">Отправить</button>
+        </form>
+
+    </div>
+
+</div>
+<button id="clear-chat" class="clear-btn">Обновить чат</button>
+<script>
+
+const USER_ID = "{{ request.session.user_id|default:'guest' }}";
+const STORAGE_KEY = "chat_session_" + USER_ID;
+
+const chatWindow = document.getElementById('chat-window');
+
+
+// загрузка чата при открытии страницы
+function loadChat(){
+
+    const saved = sessionStorage.getItem(STORAGE_KEY);
+
+    if(saved){
+        chatWindow.innerHTML = saved;
+        chatWindow.scrollTop = chatWindow.scrollHeight;
+    }
+
+}
+
+loadChat();
+
+
+// сохранение чата
+function saveChat(){
+    sessionStorage.setItem(STORAGE_KEY, chatWindow.innerHTML);
+}
+
+
+document.getElementById('chat-form').addEventListener('submit', async function(e){
+
+    e.preventDefault();
+
+    const questionInput = document.getElementById('question');
+    const question = questionInput.value.trim();
+
+    if(!question) return;
+
+    const userMsg = document.createElement('p');
+
+    userMsg.innerHTML = `<b>Вы:</b> ${question}`;
+
+    chatWindow.appendChild(userMsg);
+
+    saveChat();
+
+
+    const response = await fetch("{% url 'ai_advocate' %}", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": "{{ csrf_token }}"
+        },
+        body: JSON.stringify({question: question})
+    });
+
+    const data = await response.json();
+
+    const botMsg = document.createElement('p');
+
+    botMsg.innerHTML = `<b>ИИ адвокат:</b> ${data.answer}<br>`;
+
+
+    if(data.laws && data.laws.length > 0){
+
+        data.laws.forEach(law => {
+
+            botMsg.innerHTML += `
+                <a href="${law.external_link}" target="_blank">[Внешняя] ${law.title}</a> |
+                <a href="${law.internal_link}">[Внутренняя] ${law.title}</a><br>
+            `;
+
+        });
+
+    }
+
+
+    if(data.accuracy !== undefined){
+
+        botMsg.innerHTML += `<i>Точность: ${data.accuracy}%</i>`;
+
+    }
+
+    chatWindow.appendChild(botMsg);
+
+    saveChat();
+
+
+    if(data.authenticated === false){
+
+        const info = document.createElement('p');
+
+        info.innerHTML = `<i>Войдите в систему, чтобы сохранять историю чата.</i>`;
+
+        chatWindow.appendChild(info);
+
+        saveChat();
+
+    }
+
+
+    questionInput.value = "";
+
+    chatWindow.scrollTop = chatWindow.scrollHeight;
+
+});
+document.getElementById("clear-chat").addEventListener("click", function(){
+
+    chatWindow.innerHTML = "";
+
+    sessionStorage.removeItem(STORAGE_KEY);
+
+});
+
+</script>
+
+{% endblock %}

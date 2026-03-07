@@ -1,0 +1,75 @@
+{% extends 'paintings/base.html' %}
+
+{% block title %}Законы{% endblock %}
+
+{% block content %}
+
+<h1 class="page-title">Законы</h1>
+
+<div class="laws">
+
+<form method="get" class="law-search chat-formA">
+
+    <input type="text"  name="zakon_id" placeholder="ZAKONID" value="{{ zakon_id }}">
+
+    <input type="text"  name="q" placeholder="Поиск закона" value="{{ query }}">
+
+    <input type="text"  name="category"
+           placeholder="Категория"
+           value="{{ category }}"
+           list="categories_list">
+
+    <datalist id="categories_list">
+        {% for cat in all_categories %}
+            <option value="{{ cat }}">
+        {% endfor %}
+    </datalist>
+
+    <button type="submit" class="law-btn-primary">Найти</button>
+
+</form>
+
+
+<div class="laws-card">
+
+{% for zakon in zakons_list %}
+
+<div class="law-item {% if zakon.id in favorite_ids %}favorite{% endif %}">
+
+    <div class="law-main">
+
+        <a href="{% url 'zakon_detail' zakon.id %}">
+            {{ zakon.title }}
+        </a>
+
+        {% if zakon.category %}
+        <span class="law-category">{{ zakon.category }}</span>
+        {% endif %}
+
+    </div>
+
+    <div class="law-meta">
+
+        <span>ZAKONID: {{ zakon.zakon_id }}</span>
+
+        {% if zakon.original_link %}
+        <a href="{{ zakon.original_link }}" target="_blank">
+            Оригинал
+        </a>
+        {% endif %}
+
+    </div>
+
+</div>
+
+{% empty %}
+
+<p class="no-laws">Законов не найдено</p>
+
+{% endfor %}
+
+</div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,40 @@
+{% extends 'paintings/base.html' %}
+
+{% block title %}
+{{ title }}
+{% endblock %}
+
+{% block content %}
+
+<div class="ui-settings">
+
+    <div class="theme-switch">
+        <span>Theme:</span>
+
+        <button onclick="setTheme('dark')" class="setting-btn">
+            🌙 Dark
+        </button>
+
+        <button onclick="setTheme('light')" class="setting-btn">
+            ☀ Light
+        </button>
+    </div>
+
+
+    <div class="font-switch">
+        <span>Text size:</span>
+
+        <button id="fontMinus" onclick="changeFont(-1)" class="setting-btn font-minus">
+            A-
+        </button>
+            <span class="font-percent">100%</span>
+
+        <button id="fontPlus" onclick="changeFont(1)" class="setting-btn font-plus">
+            A+
+        </button>
+    </div>
+
+</div>
+
+
+{% endblock %}

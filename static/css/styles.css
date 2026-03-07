@@ -1,0 +1,1827 @@
+/* =========================
+   GLOBAL THEME VARIABLES
+========================= */
+
+:root{
+
+/* фон */
+
+--bg-main:#020617;
+--bg-gradient: radial-gradient(circle at top, #0b1d3a, #020617);
+
+/* карточки */
+
+--bg-card:rgba(255,255,255,0.05);
+--bg-input:#1c2135;
+--bg-hover:#2a2f45;
+
+/* текст */
+
+--text-main:white;
+--text_white: white;
+--text-secondary:#b6c2ff;
+--text-muted:#8a8fb3;
+
+/* акцент */
+
+--accent1:#6a5cff;
+--accent2:#9b7bff;
+--accent3:#8277ff;
+
+/* масштаб текста */
+
+--font-scale:1;
+
+}
+
+/* =========================
+   LIGHT THEME
+========================= */
+
+body.light-theme{
+
+--bg-main:#f5f7ff;
+--bg-gradient:radial-gradient(circle at top, #e2ddff, #ffffff);;
+
+--bg-card:#ffffff;
+--bg-input:#f1f3ff;
+--bg-hover:#e3e6ff;
+
+--text-main:#1b1b2d;
+--text_white: white;
+--text-secondary:#3b3f5c;
+--text-muted:#666a8a;
+
+--accent1:#5a6cff;
+--accent2:#8a74ff;
+--accent3:#9e91ff;
+
+}
+/* =========================
+   GLOBAL RESET
+========================= */
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:"Segoe UI", sans-serif;
+}
+
+/* =========================
+   BODY
+========================= */
+
+body{
+    background:var(--bg-gradient);
+    color:var(--text-main);
+    min-height:100vh;
+    font-size:calc(16px * var(--font-scale));
+    
+}
+
+/* =========================
+   LOGO
+========================= */
+
+.logo{
+    font-size:calc(28px * var(--font-scale));
+    font-weight:700;
+    letter-spacing:2px;
+    text-transform:uppercase;
+
+    
+}
+
+/* =========================
+   NAVBAR
+========================= */
+
+header{
+    width:100%;
+    padding:20px 0;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+  
+}
+
+nav{
+    margin-top:15px;
+    padding:12px 20px;
+
+    background:var(--bg-card);
+    backdrop-filter:blur(20px);
+
+    border-radius:14px;
+    box-shadow:0 10px 30px rgba(0,0,0,0.4);
+    transition:0.5s ease;
+}
+
+nav a{
+    color:var(--text-secondary);
+    text-decoration:none;
+    margin:0 12px;
+    font-size:calc(15px * var(--font-scale));
+    padding:8px 14px;
+    border-radius:8px;
+}
+
+nav a:hover{
+    background:var(--bg-hover);
+    color:var(--text-main);
+}
+
+nav a.active{
+    background:linear-gradient(135deg,var(--accent1),var(--accent2));
+    color:white;
+}
+
+/* =========================
+   AUTH PAGE
+========================= */
+
+.auth-container{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    min-height:80vh;
+}
+
+.auth-card{
+    width:420px;
+    padding:40px;
+    text-align:center;
+
+    background:var(--bg-card);
+    backdrop-filter:blur(20px);
+
+    border-radius:20px;
+    box-shadow:0 20px 40px rgba(0,0,0,0.4);
+}
+
+.auth-card h1{
+    margin-bottom:25px;
+    font-size:calc(32px * var(--font-scale));
+}
+
+/* =========================
+   FORM
+========================= */
+
+.auth-form p{
+    text-align:left;
+    margin-bottom:15px;
+}
+
+.auth-form input{
+    width:100%;
+    padding:10px 12px;
+    margin-top:6px;
+
+    border:none;
+    border-radius:8px;
+
+    background:var(--bg-input);
+    color:var(--text-main);
+}
+
+.auth-form input:focus{
+    outline:none;
+    box-shadow:0 0 0 2px var(--accent1);
+}
+
+/* =========================
+   BUTTON
+========================= */
+
+.auth-form button{
+    width:100%;
+    margin-top:15px;
+    padding:12px;
+
+    border:none;
+    cursor:pointer;
+    border-radius:10px;
+
+    background:linear-gradient(135deg,var(--accent1),var(--accent2));
+    color:white;
+}
+
+/* =========================
+   LINKS
+========================= */
+
+.auth-links{
+    margin-top:20px;
+    font-size:calc(14px * var(--font-scale));
+}
+
+.auth-links a{
+    color:var(--accent2);
+    text-decoration:none;
+}
+
+.auth-links a:hover{
+    text-decoration:underline;
+}
+
+.lol{
+    display:block;
+    margin:0 auto;
+}
+
+/* =========================
+   HERO BLOCK
+========================= */
+
+.hero{
+    width:900px;
+    margin:60px auto;
+    padding:50px;
+    text-align:center;
+
+    background:var(--bg-card);
+    backdrop-filter:blur(20px);
+
+    border-radius:20px;
+    box-shadow:0 20px 40px rgba(0,0,0,0.4);
+}
+
+.hero h1{
+    font-size:calc(38px * var(--font-scale));
+    margin-bottom:15px;
+}
+
+.hero p{
+    color:var(--text-secondary);
+    margin-bottom:25px;
+}
+
+/* =========================
+   BUTTONS
+========================= */
+
+.buttons a{
+    padding:12px 24px;
+    border-radius:10px;
+    text-decoration:none;
+    margin:5px;
+    font-weight:500;
+}
+
+.btn-primary{
+    background:linear-gradient(135deg,var(--accent1),var(--accent2));
+    color:white;
+}
+
+.btn-secondary{
+    background:var(--bg-hover);
+    color:var(--text-main);
+}
+
+/* =========================
+   LAWS BLOCK
+========================= */
+
+.laws{
+    width:900px;
+    margin:40px auto;
+}
+
+.laws h2{
+    text-align:center;
+    margin-bottom:20px;
+}
+
+.laws-card{
+    background:var(--bg-card);
+    backdrop-filter:blur(20px);
+    border-radius:16px;
+    padding:25px;
+}
+
+.law-item{
+    padding:12px;
+    border-bottom:1px solid rgba(255,255,255,0.1);
+}
+.law-item:last-child{
+    border-bottom:none;
+}
+
+.law-item a{
+    color:var(--text-secondary);
+    text-decoration:none;
+}
+
+.law-item a:hover{
+    color:var(--text-main);
+}
+
+/* FOOTER */
+
+footer{
+    margin-top:80px;
+    padding:30px;
+    text-align:center;
+    color:var(--text-muted);
+    font-size:calc(14px * var(--font-scale));
+}
+
+.page-title{
+    font-size:calc(30px * var(--font-scale));
+    text-align:center;
+    margin:0 0 20px 0;
+}
+
+/* LAYOUT */
+
+.chat-layout{
+    width:1400px;
+    margin:0 auto 60px auto;
+
+    display:grid;
+    grid-template-columns:500px 1fr;
+    gap:25px;
+}
+
+/* HISTORY */
+
+.history-panel{
+    background:var(--bg-card);
+    backdrop-filter:blur(20px);
+
+    border-radius:20px;
+    padding:20px;
+
+    max-height:400px;
+    overflow-y:auto;
+
+    box-shadow:0 20px 40px rgba(0,0,0,0.4);
+
+    position:sticky;
+    top:120px;
+
+    scrollbar-width:thin;
+    scrollbar-color:var(--accent1) transparent;
+        transition:0.5s ease;
+}
+
+/* Chrome / Edge / Safari */
+
+.history-panel::-webkit-scrollbar{
+    width:6px;
+}
+
+.history-panel::-webkit-scrollbar-track{
+    background:transparent;
+}
+
+.history-panel::-webkit-scrollbar-thumb{
+    background:linear-gradient(180deg,var(--accent1),var(--accent2));
+    border-radius:10px;
+}
+
+.history-panel::-webkit-scrollbar-thumb:hover{
+    background:var(--accent2);
+}
+
+.history-item{
+    padding:10px;
+    border-bottom:1px solid rgba(255,255,255,0.1);
+}
+
+.history-item:last-child{
+    border-bottom:none;
+}
+
+.history-item p:first-child{
+    color:var(--accent1);
+}
+
+.history-item p:nth-child(2){
+    color:var(--text-main);
+}
+
+.history-time{
+    font-size:12px;
+    color:var(--text-muted);
+}
+
+.history-panel a{
+    display:inline-block;
+    margin-top:6px;
+    margin-right:6px;
+
+    padding:5px 10px;
+
+    font-size:calc(13px * var(--font-scale));
+    border-radius:6px;
+
+    text-decoration:none;
+
+    background:var(--bg-hover);
+    color:var(--text-secondary);
+
+    transition:0.2s;
+}
+
+.history-panel a:hover{
+    background:linear-gradient(135deg,var(--accent1),var(--accent2));
+    color:white;
+}
+
+.history-panel hr{
+    border:none;
+    height:1px;
+    background:rgba(255,255,255,0.1);
+    margin:10px 0;
+}
+
+/* CHAT */
+
+.chat-panel{
+    background:var(--bg-card);
+    backdrop-filter:blur(20px);
+
+    border-radius:20px;
+    padding:20px;
+
+    display:flex;
+    flex-direction:column;
+
+    box-shadow:0 20px 40px rgba(0,0,0,0.4);
+        transition:0.5s ease;
+}
+
+.chat-window{
+    flex:1;
+    margin-bottom:15px;
+
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    
+}
+
+/* MESSAGE BASE */
+
+.chat-window p{
+    max-width:70%;
+    padding:12px 16px;
+    border-radius:14px;
+    font-size:calc(15px * var(--font-scale));
+    line-height:1.5;
+
+    background:var(--bg-hover);
+    color:var(--text-main);
+
+    animation:msgAppear 0.25s ease;
+}
+
+@keyframes msgAppear{
+    from{
+        opacity:0;
+        transform:translateY(10px);
+    }
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+}
+
+/* USER MESSAGE */
+
+.chat-window p:not(:has(br)){
+    align-self:flex-end;
+    background:linear-gradient(135deg,var(--accent1),var(--accent2));
+    border-bottom-right-radius:4px;
+    color:white;
+}
+
+/* =========================
+   AI MESSAGE
+========================= */
+
+.chat-window p:has(br){
+align-self:flex-start;
+background:linear-gradient(135deg,var(--accent1),var(--accent2));
+border-bottom-left-radius:4px;
+color: white;
+font-weight: 600;
+}
+
+/* LINKS INSIDE CHAT */
+
+.chat-window a{
+    display:inline-block;
+    margin-top:6px;
+    margin-right:6px;
+
+    padding:5px 10px;
+
+    font-size:calc(13px * var(--font-scale));
+    border-radius:6px;
+
+    text-decoration:none;
+
+    background:var(--accent3);
+    color:var(--text-secondary);
+
+    transition:0.2s;
+}
+
+.chat-window a:hover{
+text-decoration:underline;
+}
+
+/* =========================
+   FORM
+========================= */
+
+.chat-form{
+display:flex;
+gap:10px;
+
+background:var(--bg-input);
+padding:6px;
+border-radius:12px;
+}
+
+/* INPUT */
+
+.chat-form input{
+
+flex:1;
+padding:12px;
+
+border:2px solid transparent;
+border-radius:8px;
+
+background:var(--bg-input);
+color:var(--text-main);
+
+outline:none;
+appearance:none;
+-webkit-appearance:none;
+
+box-shadow:none;
+}
+
+.chat-form input::placeholder{
+color:var(--text-muted);
+}
+
+/* FOCUS */
+
+.chat-form input:focus{
+outline:none;
+border:2px solid var(--accent1);
+box-shadow:0 0 0 2px rgba(106,92,255,0.4);
+}
+
+/* AUTOFILL FIX */
+
+.chat-form input:-webkit-autofill,
+.chat-form input:-webkit-autofill:hover,
+.chat-form input:-webkit-autofill:focus{
+
+-webkit-box-shadow:0 0 0 1000px var(--bg-input) inset !important;
+-webkit-text-fill-color:var(--text-main) !important;
+caret-color:var(--text-main);
+
+}
+
+/* BUTTON */
+
+.chat-form button{
+
+padding:12px 20px;
+border:none;
+border-radius:10px;
+
+background:linear-gradient(135deg,var(--accent1),var(--accent2));
+color:white;
+
+cursor:pointer;
+transition:0.2s;
+
+}
+
+.chat-form button:hover{
+opacity:0.9;
+}
+
+/* CLEAR BUTTON */
+
+.clear-btn{
+
+align-self:flex-end;
+
+margin-bottom:10px;
+margin-left:50px;
+
+padding:6px 12px;
+
+border:none;
+border-radius:8px;
+
+background:var(--bg-hover);
+color:var(--text-secondary);
+
+cursor:pointer;
+font-size:calc(20px * var(--font-scale));
+
+transition:0.2s;
+
+}
+
+.clear-btn:hover{
+background:#ff5c7a;
+color:white;
+}
+
+/* =========================
+   SEARCH
+========================= */
+
+.law-search{
+display:flex;
+flex-wrap:wrap;
+gap:10px;
+margin-bottom:20px;
+}
+
+.law-search input{
+
+padding:10px 14px;
+border-radius:10px;
+border:none;
+
+background:var(--bg-input);
+color:var(--text-main);
+
+}
+
+.law-search button{
+
+padding:10px 18px;
+border:none;
+border-radius:10px;
+
+background:linear-gradient(135deg,var(--accent1),var(--accent2));
+color:white;
+
+cursor:pointer;
+
+}
+
+/* =========================
+   LAW ITEMS
+========================= */
+
+.law-item{
+
+padding:15px;
+border-bottom:1px solid rgba(255,255,255,0.1);
+
+display:flex;
+flex-direction:column;
+gap:6px;
+
+}
+
+.law-item:last-child{
+border-bottom:none;
+}
+
+.law-main{
+display:flex;
+align-items:center;
+gap:10px;
+}
+
+.law-main a{
+
+color:var(--text-main);
+font-size:calc(17px * var(--font-scale));
+font-weight:500;
+text-decoration:none;
+
+}
+
+.law-main a:hover{
+color:var(--text-secondary);
+}
+
+.law-category{
+
+font-size:calc(12px * var(--font-scale));
+
+background:var(--bg-hover);
+
+padding:3px 8px;
+border-radius:6px;
+
+color:var(--text-secondary);
+
+}
+
+.law-meta{
+
+    font-size:calc(13px * var(--font-scale));
+color:var(--text-muted);
+
+display:flex;
+gap:12px;
+
+}
+
+.law-meta a{
+color:var(--accent2);
+text-decoration:none;
+}
+
+.law-meta a:hover{
+text-decoration:underline;
+}
+
+/* FAVORITE */
+
+.law-item.favorite{
+
+background:rgba(255,243,176,0.12);
+border-left:3px solid #ffd54f;
+
+padding-left:12px;
+
+}
+
+/* =========================
+   DETAIL PAGE
+========================= */
+
+.zakon-card h2{
+margin-bottom:15px;
+}
+
+.zakon-description{
+
+line-height:1.6;
+color:var(--text-secondary);
+margin-bottom:20px;
+
+}
+
+.zakon-info p{
+margin-bottom:8px;
+}
+
+.law-original{
+
+display:inline-block;
+margin-top:10px;
+
+padding:8px 14px;
+border-radius:8px;
+
+background:var(--bg-hover);
+color:var(--text-secondary);
+
+text-decoration:none;
+
+}
+
+.law-original:hover{
+background:var(--bg-input);
+}
+
+/* FAVORITE BUTTON */
+
+.favorite-block{
+margin-top:20px;
+}
+
+/* BACK LINK */
+
+.back-link{
+
+display:inline-block;
+margin-top:20px;
+
+color:var(--accent2);
+text-decoration:none;
+
+}
+
+.back-link:hover{
+text-decoration:underline;
+}
+
+/* =========================
+   NO RESULTS
+========================= */
+
+.no-laws{
+
+text-align:center;
+color:var(--text-muted);
+padding:20px;
+
+}
+
+/* =========================
+   LAW PAGE BUTTONS
+========================= */
+
+.law-btn-primary,
+.law-btn-clear{
+
+padding:8px 16px;
+    font-size:calc(16px * var(--font-scale));
+
+border-radius:12px;
+
+border:none;
+cursor:pointer;
+
+font-weight:500;
+
+transition:0.2s;
+
+}
+
+/* PRIMARY */
+
+.law-btn-primary{
+
+background:linear-gradient(135deg,var(--accent1),var(--accent2));
+color:white;
+
+box-shadow:0 8px 20px rgba(106,92,255,0.35);
+
+}
+
+.law-btn-primary:hover{
+
+transform:translateY(-2px);
+
+box-shadow:0 12px 28px rgba(106,92,255,0.45);
+
+}
+
+/* CLEAR */
+
+.law-btn-clear{
+
+    background:#f73939 !important;
+    color:#ffffff !important;
+
+    border:1px solid rgba(255,255,255,0.08);
+}
+
+.law-btn-clear:hover{
+
+    background:#862828;
+    color:white;
+    box-shadow:0 12px 28px rgba(255, 108, 92, 0.45);
+
+    transform:translateY(-1px);
+}
+
+/* BUTTON GROUP */
+
+.favorite-block{
+
+    margin-top:25px;
+
+    display:flex;
+    gap:12px;
+    flex-wrap:wrap;
+}
+
+/* BACK BUTTON */
+
+.back-btn{
+
+display:inline-block;
+
+margin-top:25px;
+
+text-decoration:none;
+
+background:var(--bg-hover);
+color:var(--text-main);
+
+border:1px solid rgba(255,255,255,0.08);
+
+padding:10px 16px;
+border-radius:8px;
+
+transition:0.2s;
+
+}
+
+.back-btn:hover{
+
+background:var(--accent1);
+color:white;
+
+}
+
+/* =========================
+   FORM
+========================= */
+
+.chat-formA{
+
+display:flex;
+gap:10px;
+
+padding:5px;
+
+}
+
+/* =========================
+   INPUT
+========================= */
+
+.chat-formA input{
+
+flex:1;
+
+padding:12px;
+
+border:2px solid transparent;
+border-radius:8px;
+
+background:var(--bg-input);
+color:var(--text-main);
+
+outline:none;
+appearance:none;
+-webkit-appearance:none;
+
+box-shadow:none;
+
+}
+
+.chat-formA input::placeholder{
+
+color:var(--text-muted);
+
+}
+
+/* =========================
+   FOCUS
+========================= */
+
+.chat-formA input:focus{
+
+outline:none;
+
+border:2px solid var(--accent1);
+box-shadow:0 0 0 2px rgba(106,92,255,0.4);
+
+}
+
+/* =========================
+   AUTOFILL FIX
+========================= */
+
+.chat-formA input:-webkit-autofill,
+.chat-formA input:-webkit-autofill:hover,
+.chat-formA input:-webkit-autofill:focus{
+
+-webkit-box-shadow:0 0 0 1000px var(--bg-input) inset !important;
+-webkit-text-fill-color:var(--text-main) !important;
+
+caret-color:var(--text-main);
+
+}
+
+/* =========================
+   FAVORITE LAWS
+========================= */
+
+.law-item.favorite{
+
+background:linear-gradient(
+135deg,
+rgba(255,215,0,0.12),
+rgba(255,190,0,0.08)
+);
+
+border-left:4px solid gold;
+
+box-shadow:0 0 15px rgba(255,215,0,0.25);
+
+padding-left:14px;
+
+}
+
+.law-item.favorite .law-main a{
+
+color:#ffd700;
+font-weight:600;
+
+}
+
+.law-item.favorite .law-meta{
+
+color:#ffdc72;
+
+}
+
+.law-item.favorite:hover{
+
+background:linear-gradient(
+135deg,
+rgba(255,215,0,0.18),
+rgba(255,190,0,0.12)
+);
+
+}
+
+/* =========================
+   MODAL
+========================= */
+
+.modal{
+
+display:none;
+
+position:fixed;
+left:0;
+top:0;
+
+width:100%;
+height:100%;
+
+background:rgba(0,0,0,0.7);
+
+}
+
+.modal-content{
+
+background:var(--bg-main);
+
+margin:8% auto;
+
+padding:30px;
+
+width:600px;
+
+border-radius:12px;
+
+color:var(--text-main);
+
+}
+
+.close{
+
+float:right;
+
+font-size:22px;
+
+cursor:pointer;
+
+color:var(--text-secondary);
+
+}
+
+/* =========================
+   TOAST
+========================= */
+
+.toast-container{
+
+position:fixed;
+
+top:20px;
+right:20px;
+
+z-index:9999;
+
+display:flex;
+flex-direction:column;
+
+gap:10px;
+
+}
+
+.toast-message{
+
+min-width:220px;
+max-width:320px;
+
+padding:12px 16px;
+
+border-radius:10px;
+
+color:white;
+
+    font-size:calc(14px * var(--font-scale));
+
+box-shadow:0 6px 20px rgba(0,0,0,0.2);
+
+animation:toast-in 0.4s ease;
+
+}
+
+/* типы */
+
+.toast-success{
+background:#2e7d32;
+}
+
+.toast-error{
+background:#c62828;
+}
+
+.toast-warning{
+background:#ef6c00;
+}
+
+.toast-info{
+background:#1565c0;
+}
+
+/* =========================
+   TOAST ANIMATION
+========================= */
+
+@keyframes toast-in{
+
+from{
+opacity:0;
+transform:translateX(50px);
+}
+
+to{
+opacity:1;
+transform:translateX(0);
+}
+
+}
+
+.toast-hide{
+
+animation:toast-out 0.4s forwards;
+
+}
+
+@keyframes toast-out{
+
+to{
+opacity:0;
+transform:translateX(60px);
+}
+
+}
+
+
+
+
+
+
+
+
+
+
+/* =========================
+   SETTINGS PANEL
+========================= */
+
+.ui-settings{
+
+max-width:500px;
+margin:40px auto;
+
+padding:25px;
+
+background:var(--bg-card);
+
+border-radius:16px;
+
+box-shadow:0 15px 40px rgba(0,0,0,0.35);
+
+display:flex;
+flex-direction:column;
+gap:25px;
+
+}
+
+/* BLOCKS */
+
+.theme-switch,
+.font-switch{
+
+display:flex;
+align-items:center;
+justify-content:space-between;
+flex-wrap:wrap;
+gap:12px;
+
+}
+
+/* LABEL */
+
+.ui-settings span{
+
+font-size:16px;
+font-weight:500;
+
+color:var(--text-secondary);
+
+}
+
+/* BUTTON */
+
+.setting-btn{
+
+padding:8px 16px;
+
+border:none;
+border-radius:10px;
+
+background:var(--bg-hover);
+color:var(--text-main);
+
+cursor:pointer;
+
+font-size:14px;
+font-weight:500;
+
+transition:0.2s;
+
+}
+
+/* HOVER */
+
+.setting-btn:hover{
+
+background:linear-gradient(135deg,var(--accent1),var(--accent2));
+color:white;
+
+transform:translateY(-1px);
+
+}
+
+/* ACTIVE */
+
+.setting-btn.active{
+
+background:linear-gradient(135deg,var(--accent1),var(--accent2));
+color:white;
+
+box-shadow:0 6px 18px rgba(106,92,255,0.35);
+
+}
+.setting-btn.active{
+
+background:var(--accent1);
+color:white;
+
+box-shadow:0 0 0 2px rgba(106,92,255,0.4);
+
+transform:translateY(-1px);
+
+}
+
+
+.font-percent{
+
+min-width:48px;
+text-align:center;
+
+color:var(--text-secondary);
+font-weight:600;
+
+}
+
+.setting-btn:disabled{
+
+opacity:0.4;
+cursor:not-allowed;
+
+}
+
+
+
+
+
+
+
+/* =========================
+   PROFILE PAGE
+========================= */
+
+.profile-container{
+    max-width:900px;
+    margin:40px auto;
+    padding:40px;
+
+    background:var(--bg-card);
+    backdrop-filter:blur(20px);
+
+    border-radius:20px;
+    box-shadow:0 20px 40px rgba(0,0,0,0.4);
+}
+
+/* Заголовки */
+
+.profile-container h1{
+    font-size:calc(32px * var(--font-scale));
+    margin-bottom:10px;
+}
+
+.profile-container h2{
+    margin-top:30px;
+    margin-bottom:15px;
+    font-size:calc(22px * var(--font-scale));
+    color:var(--text-secondary);
+}
+
+/* текст */
+
+.profile-container p{
+    margin-bottom:10px;
+    color:var(--text-secondary);
+}
+
+/* списки */
+
+.profile-container ul{
+    list-style:none;
+    margin-top:10px;
+}
+
+.profile-container li{
+    padding:14px 16px;
+    margin-bottom:10px;
+
+    background:var(--bg-input);
+    border-radius:10px;
+
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    flex-wrap:wrap;
+}
+
+/* ссылки */
+
+.profile-container a{
+    color:var(--accent2);
+    text-decoration:none;
+    font-weight:500;
+}
+
+.profile-container a:hover{
+    text-decoration:underline;
+}
+
+/* кнопки */
+
+.btn{
+    border:none;
+    padding:8px 14px;
+    border-radius:8px;
+    cursor:pointer;
+    font-size:calc(14px * var(--font-scale));
+}
+
+.btn-warning{
+    background:#ffb347;
+    color:black;
+}
+
+.btn-warning:hover{
+    opacity:0.9;
+}
+
+.btn-danger{
+    background:#ff5c5c;
+    color:white;
+}
+
+.btn-danger:hover{
+    opacity:0.9;
+}
+
+/* аналитика */
+
+.analytics-box{
+    margin-top:20px;
+}
+
+.analytics-box li{
+    flex-direction:column;
+    align-items:flex-start;
+}
+
+/* разделитель */
+
+.profile-container hr{
+    border:none;
+    height:1px;
+    background:var(--bg-hover);
+    margin:25px 0;
+}
+
+
+
+
+
+
+
+
+
+
+/* =========================
+   ANALYTICS
+========================= */
+
+.analytics-title{
+    margin-top:30px;
+    margin-bottom:20px;
+    color:white;
+}
+
+/* контейнер карточек */
+
+.analytics-container{
+    display:flex;
+    gap:20px;
+    margin-bottom:25px;
+    flex-wrap:wrap;
+}
+
+/* карточки статистики */
+
+.analytics-card{
+    flex:1;
+    min-width:200px;
+
+    background:var(--bg-input);
+    border-radius:14px;
+
+    padding:20px;
+
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+
+    box-shadow:0 10px 25px rgba(0,0,0,0.3);
+
+    transition:0.3s;
+}
+
+.analytics-card:hover{
+    transform:translateY(-4px);
+    background:var(--bg-hover);
+}
+
+/* текст */
+
+.analytics-label{
+       font-size:calc(14px * var(--font-scale));
+    opacity:0.8;
+}
+
+.analytics-value{
+    font-size:calc(28px * var(--font-scale));
+    font-weight:700;
+}
+
+/* блоки последних действий */
+
+.analytics-block{
+
+    background:var(--bg-input);
+
+    padding:20px;
+    border-radius:14px;
+
+    margin-bottom:20px;
+
+    box-shadow:0 10px 25px rgba(0,0,0,0.3);
+}
+
+/* заголовок блока */
+
+.analytics-block h3{
+    margin-bottom:10px;
+}
+
+/* текст */
+
+.analytics-block p{
+    margin-bottom:8px;
+}
+
+/* дата */
+
+.analytics-date{
+    font-size:calc(14px * var(--font-scale));
+    opacity:0.7;
+}
+
+/* ссылка на закон */
+
+.law-link{
+    color:var(--accent2);
+    text-decoration:none;
+    font-weight:500;
+}
+
+.law-link:hover{
+    text-decoration:underline;
+}
+
+
+
+
+
+
+
+
+
+
+/* =========================
+   CALENDAR WRAPPER
+========================= */
+
+.calendar-wrapper{
+display:flex;
+flex-direction:column;
+gap:40px;
+}
+
+/* =========================
+   MONTH CARD
+========================= */
+
+.calendar-month{
+background:var(--bg-card);
+padding:10px;
+border-radius:16px;
+box-shadow:0 10px 30px rgba(0,0,0,0.25);
+}
+
+.month-title{
+margin-bottom:15px;
+color:var(--text-main);
+font-size:18px;
+font-weight:600;
+border-radius: 5px;
+background-color: var(--accent1);
+width: 100px;
+padding-left: 15px;
+cursor:zoom-in ;
+transition: transform 0.2s ease; 
+
+}
+.month-title:hover{
+  transform: scale(1.2); 
+
+}
+
+/* =========================
+   CALENDAR GRID
+========================= */
+
+.calendar-grid{
+display:grid;
+grid-template-columns: 40px repeat(7, 40px);
+gap:6px;
+grid-auto-rows:40px;
+align-items:center;
+}
+.calendar-grid > *{
+min-width:0;
+}
+/* =========================
+   WEEKDAY
+========================= */
+
+.weekday{
+width: 40px !important;
+text-align:center;
+font-size:13px;
+color:var(--text-muted);
+
+}
+
+
+/* =========================
+   WEEK NUMBER
+========================= */
+
+.week-number{
+    overflow:hidden;
+font-size:20px;
+font-weight:600;
+color:var(--text-main);
+
+border-radius:5px;
+background-color:var(--accent1);
+height: 40px;
+display:flex;
+align-items:center;
+justify-content:center;
+
+cursor:zoom-in;
+transition:transform 0.2s ease;
+}
+.week-number:hover{
+  transform: scale(1.2); 
+
+}
+
+/* =========================
+   DAY
+========================= */
+
+.calendar-day{
+display:flex;
+align-items:center;
+justify-content:center;
+
+border-radius:6px;
+cursor:pointer;
+background-color:var(--bg-card);
+
+font-size:14px;
+color:var(--text-main);
+
+transition:all 0.18s ease;
+}
+
+.calendar-day:hover{
+transform:scale(1.18);
+box-shadow:0 0 10px rgba(0,0,0,0.45);
+}
+
+/* пустая ячейка */
+
+.calendar-empty{
+width:40px;
+height:40px;
+}
+
+/* =========================
+   ACTIVITY LEVELS
+========================= */
+
+.level-0{background:var(--bg-main);}
+.level-1{background:#0e4429;}
+.level-2{background:#006d32;}
+.level-3{background:#26a641;}
+.level-4{background:#39d353;}
+
+/* =========================
+   DAY DETAILS PANEL
+========================= */
+
+.day-details-panel{
+
+position:fixed;
+right:30px;
+top:120px;
+
+width:360px;
+max-height:500px;
+
+overflow-y:auto;
+
+background:var(--bg-card);
+padding:20px;
+
+border-radius:16px;
+box-shadow:0 20px 40px rgba(0,0,0,0.4);
+scrollbar-width:thin;
+scrollbar-color:var(--accent2) transparent;
+}
+
+.day-details-panel p{
+margin-bottom:8px;
+color:var(--text-main);
+}
+
+.day-details-panel ul{
+margin-top:10px;
+margin-bottom:20px;
+padding-left:18px;
+}
+
+.day-details-panel li{
+margin-bottom:10px;
+color:var(--text-main);
+}
+
+.day-details-panel a{
+color:var(--accent2);
+text-decoration:none;
+}
+
+.day-details-panel a:hover{
+text-decoration:underline;
+}
+
+/* =========================
+   MODAL
+========================= */
+
+.modala{
+
+display:none;
+position:fixed;
+inset:0;
+
+background:rgba(0,0,0,0.7);
+
+justify-content:center;
+align-items:center;
+
+z-index:999;
+}
+
+.modala.active{
+display:flex;
+}
+
+.modala-content{
+
+position:relative;
+
+background:var(--bg-card);
+
+padding:25px;
+border-radius:16px;
+
+width:420px;
+max-height:80vh;
+
+overflow-y:auto;
+
+color:var(--text-main);
+
+box-shadow:0 20px 50px rgba(0,0,0,0.45);
+scrollbar-width:thin;
+scrollbar-color:var(--accent2) transparent;
+}
+
+/* =========================
+   CLOSE BUTTON (STICKY)
+========================= */
+
+.close-btn{
+
+position:sticky;
+top:0;
+
+display:flex;
+justify-content:flex-end;
+
+background:var(--bg-card);
+
+padding-bottom:10px;
+margin-bottom:10px;
+
+font-size:18px;
+cursor:pointer;
+
+z-index:2;
+}
+
+.modala-content::-webkit-scrollbar{
+width:8px;
+}
+
+.modala-content::-webkit-scrollbar-track{
+background:transparent;
+}
+
+.modala-content::-webkit-scrollbar-thumb{
+background:linear-gradient(
+180deg,
+var(--accent1),
+var(--accent2)
+);
+border-radius:20px;
+}
+
+.modala-content::-webkit-scrollbar-thumb:hover{
+background:var(--accent3);
+}
+
+.day-details-panel::-webkit-scrollbar{
+width:8px;
+}
+
+.day-details-panel::-webkit-scrollbar-thumb{
+background:linear-gradient(180deg,var(--accent1),var(--accent2));
+border-radius:20px;
+}

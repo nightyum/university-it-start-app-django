@@ -1,0 +1,171 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>{% block title %}PokeLawyer{% endblock %}</title>
+
+<link rel="stylesheet" href="{% static 'css/styles.css' %}">
+
+</head>
+
+<body>
+{% block header_block %}
+<header>
+
+<div class="logo">
+    <strong>PokeLawyer</strong>
+</div>
+
+<nav>
+
+<a href="/" class="{% if request.path == '/' %}active{% endif %}">
+Главная
+</a>
+
+<a href="/aiadvocat/" class="{% if '/aiadvocat' in request.path %}active{% endif %}">
+ИИ адвокат
+</a>
+
+<a href="/zakons/" class="{% if '/zakons' in request.path %}active{% endif %}">
+Законы
+</a>
+
+<a href="/proverka/" class="{% if '/proverka' in request.path %}active{% endif %}">
+Документы
+</a>
+
+<a href="/profile/" class="{% if '/profile' in request.path %}active{% endif %}">
+Профиль
+</a>
+
+<a href="/ui/" class="{% if '/ui' in request.path %}active{% endif %}">
+ UI
+</a>
+
+</nav>
+
+</header>
+{% endblock %} 
+{% if messages %}
+<div class="toast-container">
+    {% for message in messages %}
+        <div class="toast-message toast-{{ message.tags }}">
+            {{ message }}
+        </div>
+    {% endfor %}
+</div>
+{% endif %}
+<main>
+{% block content %}
+{% endblock %}
+</main>
+
+<footer>
+
+<p>© 2026 PokeLawyer. Все права защищены.</p>
+<p>Email: pokelawyer.help@gamil.com</p>
+
+</footer>
+<script>
+
+function setTheme(theme){
+
+const buttons = document.querySelectorAll(".theme-switch .setting-btn");
+
+if(theme === "light"){
+    document.body.classList.add("light-theme");
+    localStorage.setItem("theme","light");
+}else{
+    document.body.classList.remove("light-theme");
+    localStorage.setItem("theme","dark");
+}
+
+if(buttons.length){
+    buttons.forEach(b => b.classList.remove("active"));
+
+    if(theme === "light" && buttons[1]){
+        buttons[1].classList.add("active");
+    }
+
+    if(theme === "dark" && buttons[0]){
+        buttons[0].classList.add("active");
+    }
+}
+
+}
+
+function changeFont(step){
+
+    let size = parseFloat(localStorage.getItem("fontScale")) || 1;
+
+    if(step > 0 && size >= 1.6){
+        showToast("Максимальный размер текста","warning");
+        return;
+    }
+
+    if(step < 0 && size <= 0.8){
+        showToast("Минимальный размер текста","warning");
+        return;
+    }
+
+    size += step * 0.1;
+
+    document.documentElement.style.setProperty("--font-scale", size);
+
+    localStorage.setItem("fontScale", size);
+    updateFontUI(size)
+
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    const theme = localStorage.getItem("theme") || "dark";
+    setTheme(theme);
+
+    const size = parseFloat(localStorage.getItem("fontScale")) || 1;
+    document.documentElement.style.setProperty("--font-scale", size);
+    updateFontUI(size)
+
+});
+function updateFontUI(size){
+
+const percent = Math.round(size * 100)
+
+const percentEl = document.querySelector(".font-percent")
+const minus = document.querySelector(".font-minus")
+const plus = document.querySelector(".font-plus")
+
+if(percentEl){
+    percentEl.textContent = percent + "%"
+}
+
+if(!minus || !plus) return
+
+minus.disabled = size <= 0.8
+plus.disabled = size >= 1.6
+
+}
+
+
+document.addEventListener("DOMContentLoaded", function(){
+
+    const toasts = document.querySelectorAll(".toast-message");
+
+    toasts.forEach((toast, index) => {
+
+        setTimeout(() => {
+            toast.classList.add("toast-hide");
+
+            setTimeout(()=>{
+                toast.remove();
+            },400);
+
+        }, 3000 + index * 500);
+
+    });
+
+});
+</script>
+</body>
+</html>

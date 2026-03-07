@@ -1,0 +1,30 @@
+{% extends 'paintings/base.html' %}
+
+{% block title %}Забыли логин{% endblock %}
+{% block header_block %}{% endblock %}
+
+{% block content %}
+
+<div class="auth-container">
+
+    <div class="auth-card">
+        <h1>Забыли логин?</h1>
+
+        <form method="post" class="law-search chat-formA">
+            {% csrf_token %}
+            {{ form.as_p }}
+
+            <button type="submit" class="law-btn-primary">
+                Найти логин
+            </button>
+        </form>
+
+        <div class="auth-links">
+            <a class="law-btn-primary back-btn" href="{% url 'login' %}">Вспомнили логин? </a>
+            <p><a class="law-btn-primary back-btn" href="{% url 'index' %}">Продолжить без аккаунта</a></p>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}

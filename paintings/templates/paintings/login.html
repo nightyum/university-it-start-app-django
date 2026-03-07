@@ -1,0 +1,30 @@
+{% extends 'paintings/base.html' %}
+
+{% block title %}Вход{% endblock %}
+{% block header_block %}{% endblock %}
+
+{% block content %}
+
+<div class="auth-container">
+
+    <div class="auth-card">
+        <h1>Вход</h1>
+
+        <form method="post" class="law-search chat-formA">
+            {% csrf_token %}
+            {{ form.as_p }}
+
+            <button type="submit" class="law-btn-primary lol">Войти</button>
+        </form>
+
+        <div class="auth-links">
+            <p>Нет аккаунта? <a href="{% url 'registration' %}">Зарегистрироваться</a></p>
+            <p><a class="law-btn-primary back-btn" href="{% url 'password_reset' %}">Забыли пароль?</a></p>
+            <p><a class="law-btn-primary back-btn" href="{% url 'forgot_username' %}">Забыли логин?</a></p>
+            <p><a class="law-btn-primary back-btn" href="{% url 'index' %}">Продолжить без аккаунта</a></p>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}

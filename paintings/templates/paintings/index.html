@@ -1,0 +1,63 @@
+{% extends 'paintings/base.html' %}
+
+{% block title %}
+Главная
+{% endblock %}
+
+{% block content %}
+
+<div class="hero">
+
+<h1>Юридическая помощь с ИИ за 5 минут</h1>
+
+<p>
+Получайте быстрые ответы на юридические вопросы,
+проверяйте документы и изучайте законы РК
+</p>
+
+<div class="buttons">
+
+<a class="btn-primary" href="{% url 'ai_advocate' %}">
+Задать вопрос ИИ
+</a>
+
+<a class="btn-secondary" href="{% url 'zakons' %}">
+Изучить законы
+</a>
+
+</div>
+
+</div>
+
+
+<div class="laws">
+
+<h2>Последние изменения в законодательстве РК</h2>
+
+<div class="laws-card">
+
+{% if latest_laws %}
+
+{% for law in latest_laws %}
+
+<div class="law-item">
+
+<a href="{% url 'zakon_detail' law.pk %}">
+{{ law.title }}
+</a>
+
+</div>
+
+{% endfor %}
+
+{% else %}
+
+<p>Законы еще не добавлены.</p>
+
+{% endif %}
+
+</div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,277 @@
+{% extends 'paintings/base.html' %}
+
+{% block title %}Профиль{% endblock %}
+
+{% block content %}
+<div class="profile-container">
+<h1>Добро пожаловать! {{ user.username }}</h1>
+<p>Ваша почта: {{ user.email }}</p>
+{% if  user.is_email_verified %}
+<p>Ваш Email подтвержден</p>
+{% endif %}
+<h2>Избранные законы:</h2>
+<ul>
+    {% for law in user.favorite_laws.all %}
+    <li>
+        <a href="{% url 'zakon_detail' law.pk %}">{{ law.title }}</a>  {{ law.category }}
+        <form action="{% url 'remove_from_favorites_profile' law.pk %}" method="post" style="display:inline;">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-sm law-btn-clear">Удалить из избранного</button>
+        </form>
+    </li>
+    {% empty %}
+    <li>Нет избранных законов</li>
+    {% endfor %}
+</ul>
+
+<a class="law-btn-primary back-btn" href="{% url 'logout' %}">Выйти Из аккаунта</a>
+<hr>
+<a href="{% url 'delete_account' user.id %}" class="btn btn-sm law-btn-clear">Удалить АККАУНТ</a>
+
+<h2 class="analytics-title">Сводная аналитика</h2>
+
+<div class="analytics-container">
+
+    <div class="analytics-card">
+        <span class="analytics-label">AI запросы</span>
+        <span class="analytics-value">{{ total_ai_requests }}</span>
+    </div>
+
+    <div class="analytics-card">
+        <span class="analytics-label">Просмотры законов</span>
+        <span class="analytics-value">{{ total_zakon_views }}</span>
+    </div>
+
+</div>
+
+
+{% if last_ai_request %}
+<div class="analytics-block">
+    <h3>Последний AI запрос</h3>
+
+    <p class="analytics-date">{{ last_ai_request.datetime }}</p>
+
+    <p>
+        <b>Вы:</b> {{ last_ai_request.question }}
+    </p>
+
+    <p>
+        <b>ИИ адвокат:</b>
+        {% if last_ai_request.answer %}
+            {{ last_ai_request.answer.answer }}
+        {% else %}
+            ИИ не знает ответа
+        {% endif %}
+    </p>
+</div>
+{% endif %}
+
+
+{% if last_zakon_view %}
+<div class="analytics-block">
+    <h3>Последний просмотр закона</h3>
+
+    <p class="analytics-date">{{ last_zakon_view.datetime }}</p>
+
+    <a class="law-link" href="{% url 'zakon_detail' last_zakon_view.zakon_id %}">
+        {{ last_zakon_view.zakon_title }}
+    </a>
+</div>
+{% endif %}
+
+<li>Любимая категория: {{ favorite_category }}</li>
+</ul>
+
+<hr>
+
+
+
+<h2 class="analytics-title">Детальная аналитика</h2>
+
+<div class="calendar-wrapper">
+
+{% for month, month_data in monthly_stats.items %}
+
+<div class="calendar-month">
+
+<h3 class="month-title"
+title="
+AI запросы: {{ month_data.ai_count }}
+Просмотры законов: {{ month_data.view_count }}
+Популярная категория: {{ month_data.top_category }}
+">
+{{ month }}
+</h3>
+
+<div class="calendar-grid">
+
+<!-- дни недели -->
+<div></div>
+<div class="weekday">2</div>
+<div class="weekday">3</div>
+<div class="weekday">4</div>
+<div class="weekday">5</div>
+<div class="weekday">6</div>
+<div class="weekday">7</div>
+<div class="weekday">8</div>
+
+{% for week, week_data in month_data.weeks.items %}
+<div class="week-number"
+title="
+Неделя {{ week }}
+AI запросы: {{ week_data.ai_count }}
+Просмотры: {{ week_data.view_count }}
+Популярная категория: {{ week_data.top_category }}
+">
+{{ week }}
+</div>
+
+
+{% for day, day_data in week_data.days.items %}
+{% if day_data %}
+
+<div class="calendar-day
+{% if day_data.ai_count|add:day_data.view_count > 90 %}level-4
+{% elif day_data.ai_count|add:day_data.view_count > 70 %}level-3
+{% elif day_data.ai_count|add:day_data.view_count > 25 %}level-2
+{% elif day_data.ai_count|add:day_data.view_count > 0 %}level-1
+{% else %}level-0{% endif %}"
+onclick="openDayModal(this)"
+data-date="{{ day }}"
+data-weekday="{{ day_data.weekday_name }}"
+data-ai="{{ day_data.ai_count }}"
+data-views="{{ day_data.view_count }}"
+
+data-ai-requests='{{ day_data.ai_requests|safe }}'
+data-zakon-views='{{ day_data.zakon_views|safe }}'
+
+title="
+{{ day }} ({{ day_data.weekday_name }})
+AI: {{ day_data.ai_count }}
+Просмотры: {{ day_data.view_count }}
+Категория: {{ day_data.top_category }}
+"
+
+
+>
+
+
+{{ day|date:"j" }}
+
+</div>
+{% else %}
+
+<div class="calendar-empty">_</div>
+
+{% endif %}
+
+{% endfor %}
+{% endfor %}
+
+</div>
+</div>
+
+{% endfor %}
+
+</div>
+
+<div id="dayModal" class="modala">
+
+<div class="modala-content">
+
+<span class="close-btn" onclick="closeDayModal()">✕</span>
+
+<div id="modalData"></div>
+
+</div>
+
+</div>
+<script>
+
+function openDayModal(el){
+
+const date = el.dataset.date
+const weekday = el.dataset.weekday
+const ai = el.dataset.ai
+const views = el.dataset.views
+
+let aiRequests = []
+let zakonViews = []
+
+try{
+aiRequests = JSON.parse(el.dataset.aiRequests || "[]")
+zakonViews = JSON.parse(el.dataset.zakonViews || "[]")
+}catch(e){}
+
+let html = `
+<h3>${date} (${weekday})</h3>
+
+<p>AI запросы: ${ai}</p>
+<p>Просмотры законов: ${views}</p>
+
+<h4>Посещения законов</h4>
+<ul>
+`
+
+if(zakonViews.length === 0){
+
+html += "<li>Не было посещений</li>"
+
+}else{
+
+zakonViews.forEach(v=>{
+html += `<li>
+            ${v.time} — 
+            <a href="/zakons/${v.zakon_id}/">
+                ${v.zakon_title}
+            </a>
+        </li>`
+})
+
+}
+
+html += "</ul><h4>AI запросы</h4><ul>"
+
+if(aiRequests.length === 0){
+
+html += "<li>Не было AI запросов</li>"
+
+}else{
+
+aiRequests.forEach(q=>{
+html += `
+<li>
+<b>${q.time}</b><br>
+<b>Вы:</b> ${q.question}<br>
+<b>ИИ:</b> ${q.answer || "ИИ не дал ответ"}
+</li>`
+})
+
+}
+
+html += "</ul>"
+
+document.getElementById("modalData").innerHTML = html
+
+document.getElementById("dayModal").classList.add("active")
+const modal = document.getElementById("dayModal");
+const rect = modal.getBoundingClientRect();
+const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+
+const offset = rect.top + scrollTop - (window.innerHeight / 2) + (modal.offsetHeight / 2);
+
+window.scrollTo({
+    top: offset,
+    behavior: "smooth"
+});
+}
+
+function closeDayModal(){
+
+document.getElementById("dayModal").classList.remove("active")
+
+}
+
+
+</script>
+{% endblock %}

@@ -1,0 +1,44 @@
+{% extends 'paintings/base.html' %}
+
+{% block title %}Удаление аккаунта{% endblock %}
+{% block header_block %}{% endblock %}
+
+{% block content %}
+
+<div class="auth-container">
+
+    <div class="auth-card">
+        <h1>Удаление аккаунта</h1>
+
+        <p>Введите код, который мы отправили на ваш email, чтобы подтвердить удаление аккаунта.</p><br>
+
+        {% if messages %}
+            {% for message in messages %}
+                <div class="auth-message">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+
+        <form method="post" class="law-search chat-formA">
+            {% csrf_token %}
+
+            {% if not show_code_form %}
+                <button type="submit" name="send_code" class="law-btn-primary lol">
+                    Отправить код на email
+                </button>
+            {% else %}
+                {{ form.as_p }}
+
+                <button type="submit" name="confirm_delete" class="law-btn-clear lol">
+                    Удалить аккаунт
+                </button>
+            {% endif %}
+        </form>
+
+        <div class="auth-links">
+            <p><a class="law-btn-primary back-btn" href="{% url 'index' %}">На главную</a></p>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}

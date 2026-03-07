@@ -1,0 +1,75 @@
+{% extends 'paintings/base.html' %}
+
+{% block title %}{{ zakon.title }}{% endblock %}
+
+{% block content %}
+
+<h1 class="page-title">Закон</h1>
+
+<div class="laws">
+
+<div class="laws-card zakon-card">
+
+<h2>{{ zakon.title }}</h2>
+
+<p class="zakon-description">
+{{ zakon.description }}
+</p>
+
+<div class="zakon-info">
+
+<p>
+<strong>Категория:</strong>
+{{ zakon.category|default:"—" }}
+</p>
+
+<p>
+<strong>ZAKONID:</strong>
+{{ zakon.zakon_id }}
+</p>
+
+</div>
+
+{% if zakon.original_link %}
+
+<a class="law-original"
+   href="{{ zakon.original_link }}"
+   target="_blank">
+   Читать оригинал
+</a>
+
+{% endif %}
+
+<div class="favorite-block">
+
+{% if is_favorite %}
+
+<form action="{% url 'remove_from_favorites' zakon.pk %}" method="post">
+{% csrf_token %}
+<button class="law-btn-clear">
+Удалить из избранного
+</button>
+</form>
+
+{% else %}
+
+<form action="{% url 'add_to_favorites' zakon.pk %}" method="post">
+{% csrf_token %}
+<button class="law-btn-primary">
+Добавить в избранное
+</button>
+</form>
+
+{% endif %}
+
+</div>
+
+<a class="law-btn-clear back-btn" href="{% url 'zakons' %}" >
+← Вернуться к списку законов
+</a>
+
+</div>
+
+</div>
+
+{% endblock %}
