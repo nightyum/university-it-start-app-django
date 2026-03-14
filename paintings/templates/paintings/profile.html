@@ -1,8 +1,39 @@
-{% extends 'paintings/base.html' %}
 
+{% extends 'paintings/base.html' %}
+{% load static %}
 {% block title %}Профиль{% endblock %}
 
 {% block content %}
+<style>
+    .calendar-wrapper{
+position:relative;
+overflow:hidden;
+height: 400px;
+}
+
+.month-slide{
+position:absolute;
+width:100%;
+top:0;
+left:0;
+opacity:0;
+transform:translateX(100%);
+transition:all .35s ease;
+pointer-events:none;
+}
+
+.month-slide.active{
+opacity:1;
+transform:translateX(0);
+pointer-events:auto;
+z-index:999;
+}
+
+.month-slide.left{
+transform:translateX(0%);
+}
+</style> 
+<div class="korova" data-auth="true"></div>
 <div class="profile-container">
 <h1>Добро пожаловать! {{ user.username }}</h1>
 <p>Ваша почта: {{ user.email }}</p>
@@ -23,7 +54,9 @@
     <li>Нет избранных законов</li>
     {% endfor %}
 </ul>
-
+<button onclick="startTutorial()" class="law-btn-primary back-btn">
+Пройти обучение заново
+</button>
 <a class="law-btn-primary back-btn" href="{% url 'logout' %}">Выйти Из аккаунта</a>
 <hr>
 <a href="{% url 'delete_account' user.id %}" class="btn btn-sm law-btn-clear">Удалить АККАУНТ</a>
@@ -88,11 +121,18 @@
 
 <h2 class="analytics-title">Детальная аналитика</h2>
 
-<div class="calendar-wrapper">
+<div class="calendar-nav">
+<button id="prevBtn">←</button>
+<div id="monthLabel"></div>
+<button id="nextBtn">→</button>
+</div>
+
+<div class="calendar-wrapper" id="calendarWrapper">
 
 {% for month, month_data in monthly_stats.items %}
 
-<div class="calendar-month">
+<div class="calendar-month month-slide {% if forloop.first %}active{% endif %}" 
+     data-index="{{ forloop.counter0 }}">
 
 <h3 class="month-title"
 title="
@@ -106,14 +146,14 @@ AI запросы: {{ month_data.ai_count }}
 <div class="calendar-grid">
 
 <!-- дни недели -->
-<div></div>
-<div class="weekday">2</div>
-<div class="weekday">3</div>
-<div class="weekday">4</div>
-<div class="weekday">5</div>
-<div class="weekday">6</div>
-<div class="weekday">7</div>
-<div class="weekday">8</div>
+<div>Неделя</div>
+<div class="weekday">Пн</div>
+<div class="weekday">Вт</div>
+<div class="weekday">Ср</div>
+<div class="weekday">Чт</div>
+<div class="weekday">Пт</div>
+<div class="weekday">Сб</div>
+<div class="weekday">Вс</div>
 
 {% for week, week_data in month_data.weeks.items %}
 <div class="week-number"
@@ -125,6 +165,11 @@ AI запросы: {{ week_data.ai_count }}
 ">
 {{ week }}
 </div>
+{% if forloop.first %}
+{% for i in month_data.first_day_offset %}
+<div class="calendar-empty"></div>
+{% endfor %}
+{% endif %}
 
 
 {% for day, day_data in week_data.days.items %}
@@ -174,7 +219,32 @@ AI: {{ day_data.ai_count }}
 {% endfor %}
 
 </div>
+<!-- -->
+<div class="chart-card">
 
+<div class="chart-title">
+Активность
+</div>
+
+<canvas id="activityChart" width="850" height="320"></canvas>
+<div id="chartTooltip" class="chart-tooltip" style="position:absolute;
+opacity:0;
+
+background:#1e1e1e;
+color:white;
+padding:8px 10px;
+border-radius:6px;
+
+font-size:12px;
+pointer-events:none;
+
+transform:translate(-50%,-100%);
+transition:opacity .15s ease;
+
+white-space:nowrap;"></div>
+
+</div>
+<!-- -->
 <div id="dayModal" class="modala">
 
 <div class="modala-content">
@@ -186,6 +256,7 @@ AI: {{ day_data.ai_count }}
 </div>
 
 </div>
+
 <script>
 
 function openDayModal(el){
@@ -273,5 +344,274 @@ document.getElementById("dayModal").classList.remove("active")
 }
 
 
+
+
+document.addEventListener("DOMContentLoaded", function(){
+
+let currentMonth = 0;
+const months = document.querySelectorAll(".month-slide");
+const label = document.getElementById("monthLabel");
+
+function showMonth(index, direction="right"){
+
+months.forEach(m=>{
+m.classList.remove("active","left");
+});
+
+if(direction === "right"){
+months[index].classList.add("active");
+}else{
+months[index].classList.add("active","left");
+}
+
+label.innerText = months[index].querySelector(".month-title").innerText;
+renderChart(label.innerText);
+}
+function nextMonth(){
+currentMonth = (currentMonth + 1) % months.length;
+showMonth(currentMonth,"right");
+}
+
+function prevMonth(){
+currentMonth = (currentMonth - 1 + months.length) % months.length;
+showMonth(currentMonth,"left");
+}
+
+document.getElementById("nextBtn").addEventListener("click", nextMonth);
+document.getElementById("prevBtn").addEventListener("click", prevMonth);
+
+    // Выделяем текущий месяц
+    const now = new Date();
+    const currentMonthName = now.toLocaleString('en-US', { month: 'long' }); // Получаем месяц на английском
+    const currentMonthIndex = Array.from(months).findIndex(month =>
+        month.querySelector(".month-title").innerText.includes(currentMonthName)
+    );
+
+    if (currentMonthIndex !== -1) {
+        currentMonth = currentMonthIndex;
+        showMonth(currentMonth, "right");
+    } else {
+        showMonth(0); // Если по какой-то причине текущий месяц не найден
+    }
+
+
+renderChart(label.innerText);
+});
+
+
+
+
+
+
+
+
+const chartData = JSON.parse('{{ chart_data|escapejs }}');
+
+let chartPoints = [];
+
+function getThemeColor(name){
+return getComputedStyle(document.documentElement)
+.getPropertyValue(name)
+.trim();
+}
+
+function renderChart(monthName){
+
+const data = chartData[monthName];
+if(!data) return;
+
+const canvas = document.getElementById('activityChart');
+if(!canvas) return;
+
+const ctx = canvas.getContext('2d');
+
+const width = canvas.width;
+const height = canvas.height;
+
+ctx.clearRect(0,0,width,height);
+
+chartPoints = [];
+
+const padding = 60;
+
+const maxValue = Math.max(...data.activity,1);
+
+const stepX = (width-padding*2)/Math.max(data.days.length-1,1);
+const stepY = (height-padding*2)/maxValue;
+
+
+/* цвета темы */
+
+const accent = getThemeColor("--accent1");
+const accent2 = getThemeColor("--accent2");
+const text = getThemeColor("--text-muted");
+
+
+ctx.font = "12px Segoe UI";
+ctx.fillStyle = text;
+ctx.lineWidth = 1;
+
+
+/* ---------- сетка ---------- */
+
+const step = Math.ceil(maxValue/5) || 1;
+
+ctx.strokeStyle = "rgba(255,255,255,0.08)";
+
+for(let i=0;i<=maxValue;i+=step){
+
+const y = height-padding-i*stepY;
+
+ctx.beginPath();
+ctx.moveTo(padding,y);
+ctx.lineTo(width-padding,y);
+ctx.stroke();
+
+ctx.textAlign="right";
+ctx.fillText(i,padding-8,y+4);
+
+}
+
+
+/* ---------- оси ---------- */
+
+ctx.strokeStyle = "rgba(255,255,255,0.2)";
+ctx.beginPath();
+ctx.moveTo(padding,padding);
+ctx.lineTo(padding,height-padding);
+ctx.lineTo(width-padding,height-padding);
+ctx.stroke();
+
+
+/* ---------- линия ---------- */
+
+ctx.lineWidth = 3;
+ctx.strokeStyle = accent;
+ctx.lineCap="round";
+ctx.lineJoin="round";
+
+ctx.beginPath();
+
+data.activity.forEach((value,index)=>{
+
+const x = padding + index*stepX;
+const y = height-padding-value*stepY;
+
+chartPoints.push({
+x,
+y,
+value,
+day: data.days[index],
+ai: data.activityAI[index],
+zakon: data.activityZAKON[index]
+});
+if(index===0){
+ctx.moveTo(x,y);
+}else{
+ctx.lineTo(x,y);
+}
+
+});
+
+ctx.stroke();
+
+
+/* ---------- градиент ---------- */
+
+const gradient = ctx.createLinearGradient(0,padding,0,height);
+gradient.addColorStop(0,accent2+"66");
+gradient.addColorStop(1,"transparent");
+
+ctx.lineTo(width-padding,height-padding);
+ctx.lineTo(padding,height-padding);
+ctx.closePath();
+
+ctx.fillStyle = gradient;
+ctx.fill();
+
+
+/* ---------- точки ---------- */
+
+ctx.fillStyle = accent;
+
+chartPoints.forEach(point=>{
+
+ctx.beginPath();
+ctx.arc(point.x,point.y,4,0,Math.PI*2);
+ctx.fill();
+
+});
+
+
+/* ---------- дни ---------- */
+
+ctx.fillStyle=text;
+ctx.textAlign="center";
+
+data.days.forEach((day,index)=>{
+
+const x = padding + index*stepX;
+ctx.fillText(day,x,height-padding+20);
+
+});
+
+}
+
+
+/* ---------- HOVER ---------- */
+
+const canvas = document.getElementById("activityChart");
+const tooltip = document.getElementById("chartTooltip");
+
+if(canvas){
+
+canvas.addEventListener("mousemove",(e)=>{
+
+const rect = canvas.getBoundingClientRect();
+
+const scaleX = canvas.width / rect.width;
+const scaleY = canvas.height / rect.height;
+
+const mouseX = (e.clientX - rect.left) * scaleX;
+const mouseY = (e.clientY - rect.top) * scaleY;
+
+let found = false;
+
+chartPoints.forEach(point=>{
+
+const dist = Math.sqrt(
+(point.x-mouseX)**2 + (point.y-mouseY)**2
+);
+
+if(dist < 10){
+
+tooltip.style.opacity = 1;
+
+const canvasRect = canvas.getBoundingClientRect();
+const cardRect = canvas.parentElement.getBoundingClientRect();
+
+tooltip.style.left = (point.x + canvasRect.left - cardRect.left -25) + "px";
+tooltip.style.top = (point.y + canvasRect.top - cardRect.top -30) + "px";
+tooltip.innerHTML = `
+<b>День ${point.day}</b><br>
+Всего: <b>${point.value}</b><br>
+Законы: ${point.zakon}<br>
+ИИ: ${point.ai}
+`;
+
+found = true;
+
+}
+
+});
+
+if(!found){
+tooltip.style.opacity = 0;
+}
+
+});
+
+}
 </script>
+
 {% endblock %}
