@@ -1,0 +1,405 @@
+{% extends 'paintings/base.html' %}
+
+{% block content %}
+
+<div class="container">
+
+    <h2>
+        {% if mode == "lawyers" %}
+            Поиск адвокатов
+        {% else %}
+            Поиск пользователей
+        {% endif %}
+    </h2>
+
+    <!-- 🔍 ФОРМА ПОИСКА -->
+
+    <form method="get" class="search-form">
+
+        <!-- ФИО -->
+        <input
+            type="text"
+            name="q"
+            placeholder="ФИО"
+            value="{{ query }}"
+        >
+
+        <!-- ===================== -->
+        <!-- ДЛЯ АДВОКАТОВ -->
+        <!-- ===================== -->
+
+        {% if mode == "lawyers" %}
+
+            <!-- Специализация -->
+            <input
+                type="text"
+                name="specialty"
+                placeholder="Специализация"
+                value="{{ request.GET.specialty }}"
+            >
+
+            <!-- Занятость -->
+            <select name="availability">
+                <option value="">Любая занятость</option>
+                <option value="free"
+                    {% if request.GET.availability == "free" %}selected{% endif %}
+                >
+                    Свободные
+                </option>
+                <option value="busy"
+                    {% if request.GET.availability == "busy" %}selected{% endif %}
+                >
+                    Занятые
+                </option>
+            </select>
+        
+        {% endif %}
+
+        <!-- ===================== -->
+        <!-- ДЛЯ ПОЛЬЗОВАТЕЛЕЙ -->
+        <!-- ===================== -->
+
+        {% if mode == "users" %}
+
+            <!-- Подписка -->
+            <select name="subscription">
+                <option value="">Все подписки</option>
+                <option value="free"
+                    {% if request.GET.subscription == "free" %}selected{% endif %}
+                >
+                    Free
+                </option>
+                <option value="basic"
+                    {% if request.GET.subscription == "basic" %}selected{% endif %}
+                >
+                    Basic
+                </option>
+                <option value="pro"
+                    {% if request.GET.subscription == "pro" %}selected{% endif %}
+                >
+                    Pro
+                </option>
+            </select>
+
+            <!-- Сортировка -->
+            <select name="sort">
+                <option value="">Без сортировки</option>
+                <option value="subscription"
+                    {% if sort == "subscription" %}selected{% endif %}
+                >
+                    По подписке
+                </option>
+            </select>
+            
+        {% endif %}
+
+        <button type="submit">Найти</button>
+
+    </form>
+
+    <hr>
+
+    <!-- ===================== -->
+    <!-- 👨‍⚖️ АДВОКАТЫ -->
+    <!-- ===================== -->
+
+    {% if mode == "lawyers" %}
+
+        {% for item in lawyers %}
+
+        <div class="card {% if item.is_my_lawyer %}gold-card{% endif %}">
+
+            <h3>{{ item.lawyer.user.username }}</h3>
+
+            <p>
+                <b>Специализация:</b>
+                {{ item.lawyer.specialty }}
+            </p>
+
+            <p>
+                <b>Стаж:</b>
+                {{ item.lawyer.experience }} лет
+            </p>
+
+            <p>
+                <b>Клиенты:</b>
+                {{ item.active_clients }} / {{ item.limit }}
+            </p>
+
+            <!-- МОЙ АДВОКАТ -->
+            {% if item.is_my_lawyer %}
+            <p class="favor">Ваш адвокат</p>
+                <a href="{% url 'chat' item.lawyer.user.username %}">
+                    <button class="btn primary">
+                        Перейти в чат
+                    </button>
+                </a>
+
+            <!-- ЗАНЯТ -->
+            {% elif item.is_full %}
+
+                <button class="btn disabled" disabled>
+                    Все занято
+                </button>
+
+            <!-- СВОБОДЕН -->
+            {% else %}
+
+                <a href="{% url 'profile_lawyer' item.lawyer.user.username %}">
+                    <button class="btn">
+                        Профиль
+                    </button>
+                </a>
+
+            {% endif %}
+
+        </div>
+
+        {% empty %}
+            <p>Адвокаты не найдены</p>
+        {% endfor %}
+
+    {% endif %}
+
+    <!-- ===================== -->
+    <!-- 👤 ПОЛЬЗОВАТЕЛИ -->
+    <!-- ===================== -->
+
+    {% if mode == "users" %}
+
+        {% for u in users %}
+
+        <div class="card ">
+
+            <h3>{{ u.username }}</h3>
+
+            <p>
+                <b>Подписка:</b>
+                {{ u.subscription_level }}
+            </p>
+
+            <a href="{% url 'chat' u.username %}">
+                <button class="btn primary">
+                    Открыть чат
+                </button>
+            </a>
+
+        </div>
+
+        {% empty %}
+            <p>Пользователи не найдены</p>
+        {% endfor %}
+
+    {% endif %}
+
+</div>
+
+
+<!-- 🎨 СТИЛИ -->
+
+<style>
+
+/* =========================
+   CONTAINER
+========================= */
+
+.container {
+    max-width: 900px;
+    margin: 40px auto;
+}
+
+.favor{
+    margin-bottom: 20px;
+    color:gold !important;
+    font-size: 20px;
+    font-weight: 600;
+    
+}
+.gold-card {
+    position: relative;
+    color: #ffd900e9 !important;
+
+    background: rgba(255, 217, 0, 0.108) !important;
+
+    border-left: 5px solid #FFD700;
+
+    box-shadow: inset 4px 0 10px rgba(255, 215, 0, 0.25);
+
+    transition: 0.3s;
+}
+.gold-card p {
+
+    color: #fff1a4e9 !important;
+
+}
+.gold-card b {
+
+    color: #ffe96ae9 !important;
+
+}
+.gold-card:hover {
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
+    transform: translateY(-3px);
+}
+/* =========================
+   TITLE
+========================= */
+
+h2 {
+    margin-bottom: 20px;
+    font-size: 26px;
+    font-weight: 600;
+}
+
+/* =========================
+   SEARCH FORM
+========================= */
+
+.search-form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 25px;
+
+    padding: 15px;
+
+    background: var(--bg-card);
+    backdrop-filter: blur(20px);
+
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+}
+
+/* inputs */
+
+.search-form input,
+.search-form select {
+    padding: 10px 12px;
+    border-radius: 10px;
+    border: none;
+
+    background: var(--bg-input);
+    color: var(--text-main);
+
+    transition: 0.2s;
+}
+
+.search-form input:focus,
+.search-form select:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--accent1);
+}
+
+/* кнопка поиска */
+
+.search-form button {
+    padding: 10px 16px;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+
+    background: linear-gradient(135deg,var(--accent1),var(--accent2));
+    color: white;
+
+    transition: 0.25s ease;
+}
+
+.search-form button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(106,92,255,0.5);
+}
+
+/* =========================
+   CARDS
+========================= */
+
+.card {
+    padding: 20px;
+    margin-bottom: 18px;
+
+    background: var(--bg-card);
+    backdrop-filter: blur(25px);
+
+    border-radius: 18px;
+
+    box-shadow:
+        0 10px 30px rgba(0,0,0,0.4),
+        inset 0 0 0 1px rgba(255,255,255,0.05);
+
+    transition: 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow:
+        0 20px 50px rgba(0,0,0,0.6);
+}
+
+/* заголовок */
+
+.card h3 {
+    margin-bottom: 10px;
+    font-size: 20px;
+}
+
+/* текст */
+
+.card p {
+    margin-bottom: 6px;
+    color: var(--text-secondary);
+}
+
+.card b {
+    color: var(--text-muted);
+}
+
+/* =========================
+   BUTTONS
+========================= */
+
+.btn {
+    margin-top: 10px;
+    padding: 10px 14px;
+
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+
+    background: var(--bg-hover);
+    color: var(--text-main);
+
+    transition: 0.25s;
+}
+
+/* primary */
+
+.btn.primary {
+    background: linear-gradient(135deg,var(--accent1),var(--accent2));
+    color: white;
+
+    box-shadow: 0 5px 20px rgba(106,92,255,0.4);
+}
+
+.btn.primary:hover {
+    transform: translateY(-2px) scale(1.03);
+    box-shadow: 0 10px 30px rgba(106,92,255,0.6);
+}
+
+/* disabled */
+
+.btn.disabled {
+    background: #555;
+    color: #aaa;
+    cursor: not-allowed;
+}
+
+/* =========================
+   EMPTY TEXT
+========================= */
+
+p {
+    color: var(--text-muted);
+}
+</style>
+
+{% endblock %}

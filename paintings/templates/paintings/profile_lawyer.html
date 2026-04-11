@@ -1,0 +1,206 @@
+{% extends 'paintings/base.html' %}
+
+{% block content %}
+
+<div class="container">
+
+    <div class="card profile-card {% if is_my_lawyer %}gold-card{% endif %}">
+
+        <!-- HEADER -->
+        <div class="profile-header">
+            <h2>{{ lawyer.user.username }}</h2>
+            <span class="level">{{ lawyer.level }}</span>
+        </div>
+
+        <!-- INFO -->
+        <div class="profile-info">
+            <p><b>Специализация:</b> {{ lawyer.specialty }}</p>
+            <p><b>Стаж:</b> {{ lawyer.experience }} лет</p>
+
+            <div class="clients">
+                <span>Клиенты</span>
+                <div class="progress">
+                    <div 
+                        class="progress-bar" >
+                       
+                    </div>
+                </div>
+                <small>{{ active_clients }} / {{ limit }}</small>
+            </div>
+        </div>
+
+        <hr>
+
+        <!-- ACTIONS -->
+        <div class="actions">
+
+            {% if is_my_lawyer %}
+
+                <p class="favor">Ваш адвокат</p>
+
+                <a href="{% url 'chat' lawyer.user.username %}">
+                    <button class="btn primary">
+                        Перейти в чат
+                    </button>
+                </a>
+
+            {% elif is_full %}
+
+                <button class="btn disabled" disabled>
+                    Все занято
+                </button>
+
+            {% elif is_limit_reached %}
+
+                <button class="btn disabled" disabled>
+                    Достигнут лимит адвокатов
+                </button>
+
+            {% else %}
+
+                <form method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="btn primary">
+                        Связаться
+                    </button>
+                </form>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</div>
+
+<style>
+
+/* CONTAINER */
+.container {
+    max-width: 700px;
+    margin: 60px auto;
+}
+
+/* CARD */
+.profile-card {
+    padding: 30px;
+
+    background: var(--bg-card);
+    backdrop-filter: blur(25px);
+
+    border-radius: 20px;
+
+    box-shadow:
+        0 20px 60px rgba(0,0,0,0.5),
+        inset 0 0 0 1px rgba(255,255,255,0.05);
+
+    transition: 0.3s;
+}
+
+.profile-card:hover {
+    transform: translateY(-5px);
+}
+
+/* GOLD */
+.gold-card {
+    border-left: 6px solid #FFD700;
+    background: rgba(255, 217, 0, 0.08);
+    box-shadow: inset 4px 0 15px rgba(255,215,0,0.3);
+}
+
+/* HEADER */
+.profile-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.profile-header h2 {
+    font-size: 26px;
+}
+
+.level {
+    padding: 6px 12px;
+    border-radius: 10px;
+    font-size: 14px;
+
+    background: linear-gradient(135deg,var(--accent1),var(--accent2));
+    color: white;
+}
+
+/* INFO */
+.profile-info p {
+    margin-bottom: 8px;
+    color: var(--text-secondary);
+}
+
+.profile-info b {
+    color: var(--text-muted);
+}
+
+/* CLIENT BAR */
+.clients {
+    margin-top: 15px;
+}
+
+.progress {
+    width: 100%;
+    height: 8px;
+    border-radius: 10px;
+    background: rgba(255,255,255,0.1);
+    overflow: hidden;
+    margin: 6px 0;
+}
+
+.progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg,#FFD700,#ffae00);
+    box-shadow: 0 0 10px rgba(255,215,0,0.6);
+}
+
+/* FAVOR */
+.favor {
+    color: gold;
+    margin-bottom: 10px;
+    font-weight: 600;
+}
+
+/* BUTTONS */
+.actions {
+    margin-top: 15px;
+}
+
+.btn {
+    padding: 10px 16px;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+
+    background: var(--bg-hover);
+    color: var(--text-main);
+
+    transition: 0.25s;
+}
+
+.btn.primary {
+    background: linear-gradient(135deg,var(--accent1),var(--accent2));
+    color: white;
+
+    box-shadow: 0 5px 20px rgba(106,92,255,0.4);
+}
+
+.btn.primary:hover {
+    transform: translateY(-2px) scale(1.03);
+    box-shadow: 0 10px 30px rgba(106,92,255,0.6);
+}
+
+.btn.disabled {
+    background: #555;
+    color: #aaa;
+    cursor: not-allowed;
+}
+
+</style>
+
+{% endblock %}
