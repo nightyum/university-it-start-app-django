@@ -1,0 +1,1056 @@
+
+{% extends 'paintings/base.html' %}
+{% load static %}
+{% block title %}Профиль{% endblock %}
+
+{% block content %}
+<style>
+    .calendar-wrapper{
+position:relative;
+overflow:hidden;
+height: 400px;
+}
+
+.month-slide{
+position:absolute;
+width:100%;
+top:0;
+left:0;
+opacity:0;
+transform:translateX(100%);
+transition:all .35s ease;
+pointer-events:none;
+}
+
+.month-slide.active{
+opacity:1;
+transform:translateX(0);
+pointer-events:auto;
+z-index:999;
+}
+
+.month-slide.left{
+transform:translateX(0%);
+}
+.subscription-container{
+display:flex;
+gap:16px;
+margin-top:15px;
+flex-wrap:wrap;
+}
+
+.subscription-card{
+
+background:var(--card-bg);
+padding:18px;
+
+border-radius:12px;
+
+min-width:180px;
+
+box-shadow:0 0 10px rgba(0,0,0,.25);
+
+display:flex;
+flex-direction:column;
+gap:10px;
+}
+
+.subscription-card h4{
+margin:0;
+font-size:18px;
+}
+
+.subscription-card.pro{
+
+border:2px solid var(--accent1);
+
+box-shadow:
+0 0 12px var(--accent1);
+}
+
+.subscription-card button{
+
+width:100%;
+
+font-weight:600;
+
+padding:8px 0;
+}
+
+.subscription-card button:disabled{
+
+opacity:.5;
+cursor:not-allowed;
+}
+/* =========================
+   PROFILE
+========================= */
+
+.profile-container{
+    width:900px;
+    margin:60px auto;
+    display:flex;
+    flex-direction:column;
+    gap:25px;
+}
+
+/* HEADER */
+
+.profile-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+
+    background:var(--bg-card);
+    backdrop-filter:blur(20px);
+
+    padding:25px;
+    border-radius:20px;
+
+    box-shadow:0 20px 40px rgba(0,0,0,0.4);
+}
+
+.profile-header h1{
+    font-size:28px;
+}
+
+.profile-email{
+    color:var(--text-muted);
+}
+
+/* badge */
+
+.profile-badge{
+    padding:8px 14px;
+    border-radius:10px;
+
+    background:linear-gradient(135deg,var(--accent1),var(--accent2));
+    color:white;
+
+    font-size:14px;
+}
+
+/* CARD */
+
+.profile-card{
+    background:var(--bg-card);
+    backdrop-filter:blur(20px);
+
+    padding:25px;
+    border-radius:20px;
+
+    box-shadow:0 20px 40px rgba(0,0,0,0.4);
+
+    transition:0.3s;
+}
+
+.profile-card:hover{
+    transform:translateY(-4px);
+}
+
+/* subscription */
+
+.subscription-info{
+    margin-bottom:15px;
+    color:var(--text-secondary);
+}
+
+/* GRID */
+
+.law-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:15px;
+}
+
+/* CARD LAWYER */
+
+.lawyer-card{
+    padding:18px;
+
+    background:var(--bg-hover);
+    border-radius:14px;
+
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+
+    transition:0.25s;
+}
+
+.lawyer-card:hover{
+    transform:translateY(-3px);
+}
+
+.lawyer-card h4{
+    margin:0;
+}
+
+.lawyer-card span{
+    font-size:13px;
+    color:var(--text-muted);
+}
+
+/* empty */
+
+.empty{
+    color:var(--text-muted);
+}
+
+/* адаптив */
+
+@media(max-width:900px){
+    .profile-container{
+        width:95%;
+    }
+
+    .law-grid{
+        grid-template-columns:1fr;
+    }
+}
+/* =========================
+   PROFILE HERO
+========================= */
+
+.profile-hero{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+
+    padding:30px;
+
+background: linear-gradient(135deg,
+    rgba(40, 30, 90, 0.6),
+    rgba(70, 60, 140, 0.4)
+);
+
+    backdrop-filter:blur(25px);
+
+    border-radius:24px;
+
+    box-shadow:0 20px 50px rgba(0,0,0,0.5);
+
+    position:relative;
+    overflow:hidden;
+}
+
+/* glow эффект */
+
+.profile-hero::before{
+    content:"";
+    position:absolute;
+    width:300px;
+    height:300px;
+    background:radial-gradient(circle, var(--accent1), transparent);
+    opacity:0.2;
+    top:-100px;
+    right:-100px;
+}
+
+/* LEFT */
+
+.profile-hero-left{
+    display:flex;
+    align-items:center;
+    gap:20px;
+}
+
+/* avatar */
+
+.avatar{
+    width:70px;
+    height:70px;
+
+    border-radius:50%;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    font-size:28px;
+    font-weight:700;
+
+    background:linear-gradient(135deg,var(--accent1),var(--accent2));
+    color:white;
+
+    box-shadow:0 10px 30px rgba(106,92,255,0.5);
+}
+
+/* email */
+
+.profile-hero-left p{
+    color:var(--text-muted);
+}
+
+/* role */
+
+.role{
+    display:inline-block;
+    margin-top:6px;
+    padding:4px 10px;
+    border-radius:8px;
+    font-size:12px;
+}
+
+.role.admin{
+    background:#ff5c5c;
+    color:white;
+}
+
+.role.lawyer{
+    background:#3bb273;
+    color:white;
+}
+
+.role.user{
+    background:var(--bg-hover);
+}
+.profile-hero{
+    position:relative;
+    z-index:1;
+}
+
+.profile-hero::before{
+    z-index:0;
+    pointer-events:none;
+}
+
+.profile-hero-left,
+.profile-hero-right{
+    position:relative;
+    z-index:2;
+}
+/* RIGHT */
+
+.profile-hero-right{
+    text-align:right;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    align-items:flex-end;
+}
+
+/* план */
+
+.plan-badge{
+    font-size:20px;
+    font-weight:700;
+
+    background:linear-gradient(135deg,var(--accent1),var(--accent2));
+    color:white;
+
+    padding:6px 14px;
+    border-radius:10px;
+}
+
+/* мета */
+
+.plan-meta{
+    display:flex;
+    gap:25px;
+}
+
+.plan-meta span{
+    display:block;
+    font-size:12px;
+    color:var(--text-muted);
+}
+
+.plan-meta b{
+    font-size:16px;
+}
+
+/* адаптив */
+
+@media(max-width:900px){
+    .profile-hero{
+        flex-direction:column;
+        align-items:flex-start;
+        gap:20px;
+    }
+
+    .profile-hero-right{
+        align-items:flex-start;
+        text-align:left;
+    }
+}
+</style> 
+<div class="korova" data-auth="true"></div>
+<div class="profile-container">
+<h1 style="text-align: center;">Добро пожаловать в ваш профиль!</h1>
+<button onclick="restartTutorial()" class="tutorial-reset-btn">
+    Пройти обучение заново
+</button>
+
+    <!-- HEADER -->
+    <div class="profile-hero">
+
+    <div class="profile-hero-left">
+        <div class="avatar">
+            {{ user.username|first|upper }}
+        </div>
+
+        <div>
+            <h1>{{ user.username }}</h1>
+            <p>{{ user.email }}</p>
+
+            {% if user.is_admin %}
+                <span class="role admin">Администратор</span>
+            {% elif user.is_lawyer %}
+                <span class="role lawyer">Адвокат</span>
+            {% else %}
+                <span class="role user">Пользователь</span>
+            {% endif %}
+        </div>
+    </div>
+
+    {% if not user.is_lawyer %}
+    <div class="profile-hero-right">
+
+        <div class="plan-badge">
+            {{ user.subscription_level|upper }}
+        </div>
+
+        <div class="plan-meta">
+
+            <div>
+                <span>Осталось</span>
+                {% if user.subscription_level == "free" %}
+    <b>Бесплатный тариф</b>
+{% else %}
+    <b>{{ user.subscription_days_left }} дней</b>
+{% endif %}
+            </div>
+
+            <div>
+                <span>Адвокаты</span>
+                <b>{{ lawyers|length }}/{{ user.get_lawyer_limit }}</b>
+            </div>
+
+        </div>
+
+        <a href="{% url 'subscriptions' %}">
+            <button class="law-btn-primary">Изменить</button>
+        </a>
+
+    </div>
+    {% endif %}
+
+</div>
+
+    <!-- LAWYERS -->
+    {% if not user.is_lawyer %}
+    <div class="profile-card">
+        <h3>Мои адвокаты</h3>
+
+        <div class="law-grid">
+            {% for lawyer in lawyers %}
+            <div class="lawyer-card">
+                <h4>{{ lawyer.user.username }}</h4>
+                <p>{{ lawyer.specialty }}</p>
+                <span>{{ lawyer.experience }} лет опыта</span>
+
+                <a href="{% url 'chat' lawyer.user.username %}">
+                    <button class="law-btn-primary">Чат</button>
+                </a>
+            </div>
+            {% empty %}
+            <p class="empty">У вас пока нет адвокатов</p>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- CLIENTS -->
+    {% if user.is_lawyer %}
+    <div class="profile-card">
+        <h3>Мои клиенты</h3>
+
+        <div class="law-grid">
+            {% for client in users %}
+            <div class="lawyer-card">
+                <h4>{{ client.username }}</h4>
+
+                <a href="{% url 'chat' client.username %}">
+                    <button class="law-btn-primary">Чат</button>
+                </a>
+            </div>
+            {% empty %}
+            <p class="empty">У вас пока нет клиентов</p>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+<h2>Избранные законы:</h2>
+<ul>
+    {% for law in user.favorite_laws.all %}
+    <li>
+        <a href="{% url 'zakon_detail' law.pk %}">{{ law.title }}</a>  {{ law.category }}
+        <form action="{% url 'remove_from_favorites_profile' law.pk %}" method="post" style="display:inline;">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-sm law-btn-clear">Удалить из избранного</button>
+        </form>
+    </li>
+    {% empty %}
+    <li>Нет избранных законов</li>
+    {% endfor %}
+</ul>
+
+<a class="law-btn-primary back-btn" href="{% url 'logout' %}">Выйти Из аккаунта</a>
+<hr>
+<a href="{% url 'delete_account' %}" class="btn btn-sm law-btn-clear">Удалить АККАУНТ</a>
+
+<h2 class="analytics-title">Сводная аналитика</h2>
+
+<div class="analytics-container">
+
+    <div class="analytics-card">
+        <span class="analytics-label">AI запросы</span>
+        <span class="analytics-value">{{ total_ai_requests }}</span>
+    </div>
+
+    <div class="analytics-card">
+        <span class="analytics-label">Просмотры законов</span>
+        <span class="analytics-value">{{ total_zakon_views }}</span>
+    </div>
+
+</div>
+
+
+{% if last_ai_request %}
+<div class="analytics-block">
+    <h3>Последний AI запрос</h3>
+
+    <p class="analytics-date">{{ last_ai_request.datetime }}</p>
+
+    <p>
+        <b>Вы:</b> {{ last_ai_request.question }}
+    </p>
+
+    <p>
+        <b>ИИ адвокат:</b>
+        {% if last_ai_request.answer %}
+            {{ last_ai_request.answer.answer }}
+        {% else %}
+            ИИ не знает ответа
+        {% endif %}
+    </p>
+</div>
+{% endif %}
+
+
+{% if last_zakon_view %}
+<div class="analytics-block">
+    <h3>Последний просмотр закона</h3>
+
+    <p class="analytics-date">{{ last_zakon_view.datetime }}</p>
+
+    <a class="law-link" href="{% url 'zakon_detail' last_zakon_view.zakon_id %}">
+        {{ last_zakon_view.zakon_title }}
+    </a>
+</div>
+{% endif %}
+
+<li>Любимая категория: {{ favorite_category }}</li>
+</ul>
+
+<hr>
+
+
+
+<h2 class="analytics-title">Детальная аналитика</h2>
+
+<div class="calendar-nav">
+<button id="prevBtn">←</button>
+<div id="monthLabel"></div>
+<button id="nextBtn">→</button>
+</div>
+
+<div class="calendar-wrapper" id="calendarWrapper">
+
+{% for month, month_data in monthly_stats.items %}
+
+<div class="calendar-month month-slide {% if forloop.first %}active{% endif %}" 
+     data-index="{{ forloop.counter0 }}">
+
+<h3 class="month-title"
+title="
+AI запросы: {{ month_data.ai_count }}
+Просмотры законов: {{ month_data.view_count }}
+Популярная категория: {{ month_data.top_category }}
+">
+{{ month }}
+</h3>
+
+<div class="calendar-grid">
+
+<!-- дни недели -->
+<div>Неделя</div>
+<div class="weekday">Пн</div>
+<div class="weekday">Вт</div>
+<div class="weekday">Ср</div>
+<div class="weekday">Чт</div>
+<div class="weekday">Пт</div>
+<div class="weekday">Сб</div>
+<div class="weekday">Вс</div>
+
+{% for week, week_data in month_data.weeks.items %}
+<div class="week-number"
+title="
+Неделя {{ week }}
+AI запросы: {{ week_data.ai_count }}
+Просмотры: {{ week_data.view_count }}
+Популярная категория: {{ week_data.top_category }}
+">
+{{ week }}
+</div>
+{% if forloop.first %}
+{% for i in month_data.first_day_offset %}
+<div class="calendar-empty"></div>
+{% endfor %}
+{% endif %}
+
+
+{% for day, day_data in week_data.days.items %}
+{% if day_data %}
+
+<div class="calendar-day
+{% if day_data.ai_count|add:day_data.view_count > 90 %}level-4
+{% elif day_data.ai_count|add:day_data.view_count > 70 %}level-3
+{% elif day_data.ai_count|add:day_data.view_count > 25 %}level-2
+{% elif day_data.ai_count|add:day_data.view_count > 0 %}level-1
+{% else %}level-0{% endif %}"
+onclick="openDayModal(this)"
+data-date="{{ day }}"
+data-weekday="{{ day_data.weekday_name }}"
+data-ai="{{ day_data.ai_count }}"
+data-views="{{ day_data.view_count }}"
+
+data-ai-requests='{{ day_data.ai_requests|safe }}'
+data-zakon-views='{{ day_data.zakon_views|safe }}'
+
+title="
+{{ day }} ({{ day_data.weekday_name }})
+AI: {{ day_data.ai_count }}
+Просмотры: {{ day_data.view_count }}
+Категория: {{ day_data.top_category }}
+"
+
+
+>
+
+
+{{ day|date:"j" }}
+
+</div>
+{% else %}
+
+<div class="calendar-empty">_</div>
+
+{% endif %}
+
+{% endfor %}
+{% endfor %}
+
+</div>
+</div>
+
+{% endfor %}
+
+</div>
+<!-- -->
+<div class="chart-card">
+
+<div class="chart-title">
+Активность
+</div>
+
+<canvas id="activityChart" width="850" height="320"></canvas>
+<div id="chartTooltip" class="chart-tooltip" style="position:absolute;
+opacity:0;
+
+background:#1e1e1e;
+color:white;
+padding:8px 10px;
+border-radius:6px;
+
+font-size:12px;
+pointer-events:none;
+
+transform:translate(-50%,-100%);
+transition:opacity .15s ease;
+
+white-space:nowrap;"></div>
+
+</div>
+<!-- -->
+<div id="dayModal" class="modala">
+
+<div class="modala-content">
+
+<span class="close-btn" onclick="closeDayModal()">✕</span>
+
+<div id="modalData"></div>
+
+</div>
+
+</div>
+
+<script>
+
+function openDayModal(el){
+
+const date = el.dataset.date
+const weekday = el.dataset.weekday
+const ai = el.dataset.ai
+const views = el.dataset.views
+
+let aiRequests = []
+let zakonViews = []
+
+try{
+aiRequests = JSON.parse(el.dataset.aiRequests || "[]")
+zakonViews = JSON.parse(el.dataset.zakonViews || "[]")
+}catch(e){}
+
+let html = `
+<h3>${date} (${weekday})</h3>
+
+<p>AI запросы: ${ai}</p>
+<p>Просмотры законов: ${views}</p>
+
+<h4>Посещения законов</h4>
+<ul>
+`
+
+if(zakonViews.length === 0){
+
+html += "<li>Не было посещений</li>"
+
+}else{
+
+zakonViews.forEach(v=>{
+html += `<li>
+            ${v.time} — 
+            <a href="/zakons/${v.zakon_id}/">
+                ${v.zakon_title}
+            </a>
+        </li>`
+})
+
+}
+
+html += "</ul><h4>AI запросы</h4><ul>"
+
+if(aiRequests.length === 0){
+
+html += "<li>Не было AI запросов</li>"
+
+}else{
+
+aiRequests.forEach(q=>{
+html += `
+<li>
+<b>${q.time}</b><br>
+<b>Вы:</b> ${q.question}<br>
+<b>ИИ:</b> ${q.answer || "ИИ не дал ответ"}
+</li>`
+})
+
+}
+
+html += "</ul>"
+
+document.getElementById("modalData").innerHTML = html
+
+document.getElementById("dayModal").classList.add("active")
+const modal = document.getElementById("dayModal");
+const rect = modal.getBoundingClientRect();
+const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+
+const offset = rect.top + scrollTop - (window.innerHeight / 2) + (modal.offsetHeight / 2);
+
+window.scrollTo({
+    top: offset,
+    behavior: "smooth"
+});
+}
+
+function closeDayModal(){
+
+document.getElementById("dayModal").classList.remove("active")
+
+}
+
+
+
+
+document.addEventListener("DOMContentLoaded", function(){
+
+let currentMonth = 0;
+const months = document.querySelectorAll(".month-slide");
+const label = document.getElementById("monthLabel");
+
+function showMonth(index, direction="right"){
+
+months.forEach(m=>{
+m.classList.remove("active","left");
+});
+
+if(direction === "right"){
+months[index].classList.add("active");
+}else{
+months[index].classList.add("active","left");
+}
+
+label.innerText = months[index].querySelector(".month-title").innerText;
+renderChart(label.innerText);
+}
+function nextMonth(){
+currentMonth = (currentMonth + 1) % months.length;
+showMonth(currentMonth,"right");
+}
+
+function prevMonth(){
+currentMonth = (currentMonth - 1 + months.length) % months.length;
+showMonth(currentMonth,"left");
+}
+
+document.getElementById("nextBtn").addEventListener("click", nextMonth);
+document.getElementById("prevBtn").addEventListener("click", prevMonth);
+
+    // Выделяем текущий месяц
+    const now = new Date();
+    const currentMonthName = now.toLocaleString('en-US', { month: 'long' }); // Получаем месяц на английском
+    const currentMonthIndex = Array.from(months).findIndex(month =>
+        month.querySelector(".month-title").innerText.includes(currentMonthName)
+    );
+
+    if (currentMonthIndex !== -1) {
+        currentMonth = currentMonthIndex;
+        showMonth(currentMonth, "right");
+    } else {
+        showMonth(0); // Если по какой-то причине текущий месяц не найден
+    }
+
+
+renderChart(label.innerText);
+});
+
+
+
+
+
+
+
+
+const chartData = JSON.parse('{{ chart_data|escapejs }}');
+
+let chartPoints = [];
+
+function getThemeColor(name){
+return getComputedStyle(document.documentElement)
+.getPropertyValue(name)
+.trim();
+}
+
+function renderChart(monthName){
+
+const data = chartData[monthName];
+if(!data) return;
+
+const canvas = document.getElementById('activityChart');
+if(!canvas) return;
+
+const ctx = canvas.getContext('2d');
+
+const width = canvas.width;
+const height = canvas.height;
+
+ctx.clearRect(0,0,width,height);
+
+chartPoints = [];
+
+const padding = 60;
+
+const maxValue = Math.max(...data.activity,1);
+
+const stepX = (width-padding*2)/Math.max(data.days.length-1,1);
+const stepY = (height-padding*2)/maxValue;
+
+
+/* цвета темы */
+
+const accent = getThemeColor("--accent1");
+const accent2 = getThemeColor("--accent2");
+const text = getThemeColor("--text-muted");
+
+
+ctx.font = "12px Segoe UI";
+ctx.fillStyle = text;
+ctx.lineWidth = 1;
+
+
+/* ---------- сетка ---------- */
+
+const step = Math.ceil(maxValue/5) || 1;
+
+ctx.strokeStyle = "rgba(255,255,255,0.08)";
+
+for(let i=0;i<=maxValue;i+=step){
+
+const y = height-padding-i*stepY;
+
+ctx.beginPath();
+ctx.moveTo(padding,y);
+ctx.lineTo(width-padding,y);
+ctx.stroke();
+
+ctx.textAlign="right";
+ctx.fillText(i,padding-8,y+4);
+
+}
+
+
+/* ---------- оси ---------- */
+
+ctx.strokeStyle = "rgba(255,255,255,0.2)";
+ctx.beginPath();
+ctx.moveTo(padding,padding);
+ctx.lineTo(padding,height-padding);
+ctx.lineTo(width-padding,height-padding);
+ctx.stroke();
+
+
+/* ---------- линия ---------- */
+
+ctx.lineWidth = 3;
+ctx.strokeStyle = accent;
+ctx.lineCap="round";
+ctx.lineJoin="round";
+
+ctx.beginPath();
+
+data.activity.forEach((value,index)=>{
+
+const x = padding + index*stepX;
+const y = height-padding-value*stepY;
+
+chartPoints.push({
+x,
+y,
+value,
+day: data.days[index],
+ai: data.activityAI[index],
+zakon: data.activityZAKON[index]
+});
+if(index===0){
+ctx.moveTo(x,y);
+}else{
+ctx.lineTo(x,y);
+}
+
+});
+
+ctx.stroke();
+
+
+/* ---------- градиент ---------- */
+
+const gradient = ctx.createLinearGradient(0,padding,0,height);
+gradient.addColorStop(0,accent2+"66");
+gradient.addColorStop(1,"transparent");
+
+ctx.lineTo(width-padding,height-padding);
+ctx.lineTo(padding,height-padding);
+ctx.closePath();
+
+ctx.fillStyle = gradient;
+ctx.fill();
+
+
+/* ---------- точки ---------- */
+
+ctx.fillStyle = accent;
+
+chartPoints.forEach(point=>{
+
+ctx.beginPath();
+ctx.arc(point.x,point.y,4,0,Math.PI*2);
+ctx.fill();
+
+});
+
+
+/* ---------- дни ---------- */
+
+ctx.fillStyle=text;
+ctx.textAlign="center";
+
+data.days.forEach((day,index)=>{
+
+const x = padding + index*stepX;
+ctx.fillText(day,x,height-padding+20);
+
+});
+
+}
+
+
+/* ---------- HOVER ---------- */
+
+const canvas = document.getElementById("activityChart");
+const tooltip = document.getElementById("chartTooltip");
+
+if(canvas){
+
+canvas.addEventListener("mousemove",(e)=>{
+
+const rect = canvas.getBoundingClientRect();
+
+const scaleX = canvas.width / rect.width;
+const scaleY = canvas.height / rect.height;
+
+const mouseX = (e.clientX - rect.left) * scaleX;
+const mouseY = (e.clientY - rect.top) * scaleY;
+
+let found = false;
+
+chartPoints.forEach(point=>{
+
+const dist = Math.sqrt(
+(point.x-mouseX)**2 + (point.y-mouseY)**2
+);
+
+if(dist < 10){
+
+tooltip.style.opacity = 1;
+
+const canvasRect = canvas.getBoundingClientRect();
+const cardRect = canvas.parentElement.getBoundingClientRect();
+
+tooltip.style.left = (point.x + canvasRect.left - cardRect.left -25) + "px";
+tooltip.style.top = (point.y + canvasRect.top - cardRect.top -30) + "px";
+tooltip.innerHTML = `
+<b>День ${point.day}</b><br>
+Всего: <b>${point.value}</b><br>
+Законы: ${point.zakon}<br>
+ИИ: ${point.ai}
+`;
+
+found = true;
+
+}
+
+});
+
+if(!found){
+tooltip.style.opacity = 0;
+}
+
+});
+
+}
+</script>
+
+{% endblock %}

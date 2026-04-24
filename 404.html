@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Ошибка</title>
+  
+</head>
+
+<body>
+<style>
+/* =========================
+   GLOBAL RESET
+========================= */
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:"Segoe UI", sans-serif;
+}
+
+/* =========================
+   GLOBAL THEME VARIABLES
+========================= */
+
+:root{
+
+--bg-main:#020617;
+--bg-gradient: radial-gradient(circle at top, #0b1d3a, #020617);
+
+--bg-card:rgba(255,255,255,0.05);
+--bg-input:#1c2135;
+--bg-hover:#2a2f45;
+
+--text-main:white;
+--text-secondary:#b6c2ff;
+--text-muted:#8a8fb3;
+
+--accent1:#6a5cff;
+--accent2:#9b7bff;
+--accent3:#8277ff;
+
+--font-scale:1;
+}
+
+/* =========================
+   LIGHT THEME
+========================= */
+
+body.light-theme{
+
+--bg-main:#f5f7ff;
+--bg-gradient:radial-gradient(circle at top, #e2ddff, #ffffff);
+
+--bg-card:#ffffff;
+--bg-input:#f1f3ff;
+--bg-hover:#e3e6ff;
+
+--text-main:#1b1b2d;
+--text-secondary:#3b3f5c;
+--text-muted:#666a8a;
+
+--accent1:#5a6cff;
+--accent2:#8a74ff;
+--accent3:#9e91ff;
+}
+
+/* =========================
+   BODY (ЕДИНЫЙ!)
+========================= */
+
+body{
+    margin:0;
+    background:var(--bg-gradient);
+    color:var(--text-main);
+    min-height:100vh;
+    font-size:calc(16px * var(--font-scale));
+    transition:background 0.4s, color 0.3s;
+}
+
+/* =========================
+   ERROR PAGE
+========================= */
+
+.error-wrapper{
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+    position:relative;
+}
+
+/* фоновые свечения */
+.error-wrapper::before{
+    content:"";
+    position:absolute;
+    width:500px;
+    height:500px;
+    background:radial-gradient(circle, rgba(155,123,255,0.25), transparent 60%);
+    top:10%;
+    left:15%;
+    filter:blur(60px);
+    z-index:-1;
+}
+
+.error-wrapper::after{
+    content:"";
+    position:absolute;
+    width:500px;
+    height:500px;
+    background:radial-gradient(circle, rgba(106,92,255,0.2), transparent 60%);
+    bottom:10%;
+    right:15%;
+    filter:blur(70px);
+    z-index:-1;
+}
+
+/* карточка */
+.error-card{
+    text-align:center;
+    padding:60px 40px;
+    border-radius:26px;
+
+    background:var(--bg-card);
+    backdrop-filter:blur(25px);
+
+    border:1px solid rgba(255,255,255,0.08);
+
+    box-shadow:
+        0 20px 60px rgba(0,0,0,0.6),
+        inset 0 0 0 1px rgba(255,255,255,0.04);
+
+    max-width:520px;
+    width:100%;
+}
+
+/* код ошибки */
+.error-code{
+    font-size:110px;
+    font-weight:800;
+    line-height:1;
+
+    background:linear-gradient(135deg,var(--accent1),var(--accent2));
+
+
+    margin-bottom:10px;
+}
+
+/* текст */
+.error-card h1{
+    font-size:26px;
+    margin-bottom:10px;
+}
+
+.error-card p{
+    color:var(--text-secondary);
+    margin-bottom:30px;
+}
+
+/* кнопка */
+.error-btn{
+    display:inline-block;
+    padding:14px 22px;
+    border-radius:14px;
+
+    background:linear-gradient(135deg,var(--accent1),var(--accent2));
+    color:white;
+
+    text-decoration:none;
+    font-weight:600;
+
+    box-shadow:0 10px 30px rgba(106,92,255,0.4);
+
+    transition:0.25s ease;
+}
+
+.error-btn:hover{
+    transform:translateY(-3px) scale(1.05);
+    box-shadow:0 18px 50px rgba(106,92,255,0.6);
+}
+
+/* =========================
+   ZAKON CARD (оставил как есть)
+========================= */
+
+.zakon-card{
+    max-width:820px;
+    margin:60px auto;
+    padding:35px;
+
+    background:var(--bg-card);
+    backdrop-filter:blur(25px);
+
+    border-radius:24px;
+
+    box-shadow:
+        0 10px 30px rgba(0,0,0,0.4),
+        inset 0 0 0 1px rgba(255,255,255,0.05);
+
+    transition:0.35s ease;
+    position:relative;
+}
+
+.zakon-card:hover{
+    transform:translateY(-6px);
+}
+
+/* header */
+header{
+    width:100%;
+    padding:20px 0;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+}
+
+/* logo */
+.logo{
+    font-size:calc(28px * var(--font-scale));
+    font-weight:700;
+    letter-spacing:2px;
+    text-transform:uppercase;
+}
+
+/* =========================
+   PRINT FIX (оставил твой)
+========================= */
+
+@media print {
+    body{
+        background:white !important;
+        color:black !important;
+    }
+}
+</style>
+<body>
+<div class="error-wrapper">
+
+    <div class="error-card">
+
+        <div class="error-code" style="color: white !important;">404</div>
+
+        <h1>Страница не найдена 😢</h1>
+
+        <p>Ты куда вообще зашёл?</p>
+
+        <a href="/" class="error-btn">Вернуться на главную</a>
+
+    </div>
+
+</div>
+
+</body>
+</html>

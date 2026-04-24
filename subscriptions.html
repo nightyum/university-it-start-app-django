@@ -1,0 +1,561 @@
+{% extends 'paintings/base.html' %}
+
+{% block title %}Подписка{% endblock %}
+
+{% block content %}
+<style>
+    /* =========================
+   SUBSCRIPTION PAGE
+========================= */
+/* =========================
+   MODAL
+========================= */
+.modal-check{
+    text-align:left;
+    margin-bottom:10px;
+    font-size:14px;
+    color:var(--text-secondary);
+}
+
+.modal-check input{
+    margin-right:6px;
+    transform:scale(1.2);
+}
+
+.modal-btn.disabled{
+    opacity:0.5;
+    pointer-events:none;
+    transform:none !important;
+}
+.modal-overlay{
+    position:fixed;
+    inset:0;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    background:rgba(0,0,0,0.65);
+    backdrop-filter:blur(10px);
+
+    z-index:999999;
+}
+
+.hidden{
+    display:none;
+}
+
+/* окно */
+.modal{
+    position:relative;
+    z-index:2;
+}
+.modal{
+    width:420px;
+    padding:30px;
+
+    background:var(--bg-card);
+    backdrop-filter:blur(20px);
+
+    display:flex;
+    flex-direction:column;   /* 🔥 ВАЖНО */
+    gap:14px; 
+    border-radius:20px;
+
+    box-shadow:0 25px 70px rgba(0,0,0,0.6);
+
+    text-align:center;
+
+    animation:pop .2s ease;
+}
+
+@keyframes pop{
+    from{transform:scale(0.9); opacity:0;}
+    to{transform:scale(1); opacity:1;}
+}
+
+/* текст */
+
+.modal h3{
+    margin-bottom:10px;
+}
+
+.modal p{
+    color:var(--text-secondary);
+    margin-bottom:20px;
+    font-size:14px;
+}
+
+/* кнопки */
+
+.modal-actions{
+    display:flex;
+    gap:10px;
+    justify-content:center;
+}
+
+/* base кнопка */
+
+.modal-btn{
+    padding:10px 16px;
+    border-radius:10px;
+
+    text-decoration:none;
+    font-weight:600;
+
+    transition:0.2s;
+}
+
+/* cancel */
+
+.modal-btn.cancel{
+    background:var(--bg-hover);
+    color:var(--text-main);
+}
+
+.modal-btn.cancel:hover{
+    transform:scale(1.05);
+}
+
+/* confirm */
+
+.modal-btn.confirm{
+    background:linear-gradient(135deg,var(--accent1),var(--accent2));
+    color:white;
+    box-shadow:0 10px 30px rgba(106,92,255,0.4);
+}
+
+.modal-btn.confirm:hover{
+    transform:scale(1.05);
+}
+.subscription-page{
+    width:900px;
+    margin:60px auto;
+    text-align:center;
+}
+
+.page-title{
+    font-size:32px;
+    margin-bottom:10px;
+}
+
+.page-subtitle{
+    color:var(--text-muted);
+    margin-bottom:30px;
+}
+
+/* контейнер */
+
+.subscription-container{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:25px;
+}
+
+/* карточка */
+
+.subscription-card{
+    padding:30px;
+
+    background:var(--bg-card);
+    backdrop-filter:blur(20px);
+
+    border-radius:22px;
+
+    box-shadow:0 20px 50px rgba(0,0,0,0.4);
+
+    transition:0.3s ease;
+
+    position:relative;
+}
+
+.subscription-card:hover{
+    transform:translateY(-6px);
+}
+
+/* PRO выделение */
+
+.subscription-card.pro{
+    border:1px solid var(--accent1);
+    box-shadow:0 0 30px rgba(106,92,255,0.25);
+}
+
+/* бейдж */
+
+.plan-badge-top{
+    position:absolute;
+    top:12px;
+    right:12px;
+
+    font-size:12px;
+    padding:5px 10px;
+
+    background:linear-gradient(135deg,var(--accent1),var(--accent2));
+    color:white;
+
+    border-radius:8px;
+}
+
+/* заголовок */
+
+.plan-title{
+    font-size:22px;
+    font-weight:600;
+    margin-bottom:10px;
+}
+
+/* цена */
+
+.plan-price{
+    font-size:28px;
+    font-weight:700;
+
+    margin-bottom:15px;
+
+    color:var(--accent2);
+}
+
+/* список */
+
+.plan-features{
+    list-style:none;
+    padding:0;
+    margin:0 0 20px 0;
+}
+
+.plan-features li{
+    padding:6px 0;
+    color:var(--text-secondary);
+    font-size:14px;
+}
+
+/* адаптив */
+
+@media(max-width:900px){
+    .subscription-container{
+        grid-template-columns:1fr;
+    }
+
+    .subscription-page{
+        width:95%;
+    }
+}
+.cancel-section{
+    margin-top:40px;
+    text-align:center;
+}
+
+.cancel-warning{
+    color:var(--text-muted);
+    font-size:14px;
+    margin-bottom:10px;
+}
+
+/* кнопка отмены */
+
+.cancel-btn{
+    display:inline-block;
+
+    padding:10px 16px;
+    border-radius:10px;
+
+    background:transparent;
+    border:1px solid rgba(255, 100, 100, 0.5);
+
+    color:#ff6b6b;
+    text-decoration:none;
+
+    transition:0.2s;
+}
+
+.cancel-btn:hover{
+    background:rgba(255, 100, 100, 0.1);
+    transform:scale(1.05);
+}
+</style>
+<div class="subscription-page">
+
+    <h1 class="page-title">Выбор подписки</h1>
+    <p class="page-subtitle">Выберите план, который подходит вам</p>
+
+    <div class="subscription-container">
+
+        <!-- BASIC -->
+        <div class="subscription-card basic">
+
+            <div class="plan-title">Basic</div>
+
+            <div class="plan-price">2500тг</div>
+
+            <ul class="plan-features">
+                <li>До 2 адвокатов</li>
+                <li>Базовый доступ</li>
+                <li>30 дней</li>
+            </ul>
+
+            {% if user.subscription_level == "basic" %}
+                <button class="law-btn-clear" disabled>Активна</button>
+            {% else %}
+                <a href="#" onclick="confirmSubscribe('basic')">
+    <button class="law-btn-primary">Оформить Basic</button>
+</a>
+            {% endif %}
+
+        </div>
+
+        <!-- PRO -->
+        <div class="subscription-card pro">
+
+            <div class="plan-badge-top">🔥 POPULAR</div>
+
+            <div class="plan-title">Pro</div>
+
+            <div class="plan-price">5000тг</div>
+
+            <ul class="plan-features">
+                <li>До 5 адвокатов</li>
+                <li>Приоритет поддержка</li>
+                <li>30 дней</li>
+            </ul>
+
+            {% if user.subscription_level == "pro" %}
+                <button class="law-btn-clear" disabled>Активна</button>
+            {% else %}
+                <a href="#" onclick="confirmSubscribe('pro')">
+    <button class="law-btn-primary">Оформить Pro</button>
+</a>
+            {% endif %}
+
+        </div>
+
+    </div>
+</div>
+
+{% if user.subscription_level != "free" %}
+<div class="cancel-section">
+
+    <p class="cancel-warning">
+        Вы можете отменить подписку в любой момент.
+    </p>
+
+<button class="law-btn-primary" onclick="openCancelModal()">
+    Отменить подписку
+</button>
+
+</div>
+<div id="cancelModal" class="modal-overlay hidden">
+
+    <div class="modal">
+
+        <h3>Отмена подписки</h3>
+
+        <p>
+            Вы уверены, что хотите отменить подписку?
+            <br><br>
+            После отмены вы перейдёте на <b>Free тариф</b>,
+            а доступ к расширенным функциям будет ограничен.
+        </p>
+
+        <!-- ФОРМА ОБОРАЧИВАЕТ КНОПКИ -->
+        <form method="POST"
+              action="{% url 'cancel_subscription' %}">
+
+            {% csrf_token %}
+            <div class="modal-check">
+    <label>
+        <input type="checkbox" id="cancelCheck" disabled>
+        <span id="cancelLabel">Подождите 10 секунд...</span>
+    </label>
+</div>
+            <div class="modal-actions">
+
+                <button type="button"
+                        class="modal-btn cancel"
+                        onclick="closeCancelModal()">
+
+                    Остаться
+
+                </button>
+
+                <button type="submit"
+        id="cancelConfirmBtn"
+        class="modal-btn confirm disabled"
+        disabled>
+    Да, отменить
+</button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+{% endif %}
+<div id="subscribeModal" class="modal-overlay hidden">
+
+    <div class="modal">
+
+        <h3>Смена подписки</h3>
+
+        <p id="modalText">
+            Вы действительно хотите сменить подписку?
+        </p>
+
+        <div class="modal-check">
+    <label>
+        <input type="checkbox" id="subscribeCheck" disabled>
+        <span id="subscribeLabel">Подождите 10 секунд...</span>
+    </label>
+</div>
+
+<div class="modal-actions">
+
+    <button class="modal-btn cancel" onclick="closeModal()">
+        Отмена
+    </button>
+
+    <a id="confirmLink" class="modal-btn confirm disabled" href="#">
+        Подтвердить
+    </a>
+
+</div>
+
+    </div>
+
+</div>
+<script>
+
+let subscribeTimer;
+let cancelTimer;
+
+// =====================
+// SUBSCRIBE MODAL
+// =====================
+
+function confirmSubscribe(level){
+
+    const current = "{{ user.subscription_level }}";
+
+    let text = "";
+
+    if(current !== "free"){
+        text = "Вы смените подписку.\n\nДеньги за текущий тариф сгорят согласно соглашению.\n\nПродолжить?";
+    } else {
+        text = "Оформить подписку " + level + "?";
+    }
+
+    document.getElementById("modalText").innerText = text;
+
+    document.getElementById("confirmLink").href = "/subscribe/" + level + "/";
+
+    startSubscribeTimer();
+
+    document.getElementById("subscribeModal").classList.remove("hidden");
+}
+
+function startSubscribeTimer(){
+
+    const checkbox = document.getElementById("subscribeCheck");
+    const label = document.getElementById("subscribeLabel");
+    const btn = document.getElementById("confirmLink");
+
+    let time = 10;
+
+    checkbox.checked = false;
+    checkbox.disabled = true;
+    btn.classList.add("disabled");
+
+    label.innerText = `Подождите ${time} сек...`;
+
+    clearInterval(subscribeTimer);
+
+    subscribeTimer = setInterval(() => {
+
+        time--;
+
+        if(time > 0){
+            label.innerText = `Подождите ${time} сек...`;
+        } else {
+            clearInterval(subscribeTimer);
+
+            checkbox.disabled = false;
+            label.innerText = "Я подтверждаю действие";
+
+            checkbox.onchange = () => {
+                if(checkbox.checked){
+                    btn.classList.remove("disabled");
+                } else {
+                    btn.classList.add("disabled");
+                }
+            };
+        }
+
+    }, 1000);
+}
+
+function closeModal(){
+    document.getElementById("subscribeModal").classList.add("hidden");
+}
+
+// =====================
+// CANCEL MODAL
+// =====================
+
+function openCancelModal(){
+
+    startCancelTimer();
+
+    document.getElementById("cancelModal").classList.remove("hidden");
+}
+
+function startCancelTimer(){
+
+    const checkbox = document.getElementById("cancelCheck");
+    const label = document.getElementById("cancelLabel");
+    const btn = document.getElementById("cancelConfirmBtn");
+
+    let time = 10;
+
+    checkbox.checked = false;
+    checkbox.disabled = true;
+
+    btn.disabled = true;
+    btn.classList.add("disabled");
+
+    label.innerText = `Подождите ${time} сек...`;
+
+    clearInterval(cancelTimer);
+
+    cancelTimer = setInterval(() => {
+
+        time--;
+
+        if(time > 0){
+            label.innerText = `Подождите ${time} сек...`;
+        } else {
+            clearInterval(cancelTimer);
+
+            checkbox.disabled = false;
+            label.innerText = "Я подтверждаю отмену";
+
+            checkbox.onchange = () => {
+                if(checkbox.checked){
+                    btn.disabled = false;
+                    btn.classList.remove("disabled");
+                } else {
+                    btn.disabled = true;
+                    btn.classList.add("disabled");
+                }
+            };
+        }
+
+    }, 1000);
+}
+
+function closeCancelModal(){
+    document.getElementById("cancelModal").classList.add("hidden");
+}
+
+</script>
+{% endblock %}
