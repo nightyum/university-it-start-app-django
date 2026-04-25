@@ -44,7 +44,16 @@ urlpatterns = [
     path('admin-panel/otvet/create/', views.create_otvet, name='create_otvet'),
     path('admin-panel/otvet/<int:pk>/delete/', views.delete_otvet, name='delete_otvet'),
     path('admin-panel/otvet/<int:pk>/edit/', views.edit_otvet, name='edit_otvet'),
+    # подписки
+    path("subscribe/<str:level>/",views.subscribe,name="subscribe"),
 
+    path("save-rating/", views.save_rating, name="save_rating"),
+    path('subscriptions/', views.subscriptions_page, name='subscriptions'),
+    path(
+    "cancel-subscription/",
+    views.cancel_subscription,
+    name="cancel_subscription"
+)
 
 ]
 

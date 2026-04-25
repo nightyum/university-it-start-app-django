@@ -85,6 +85,7 @@ def lawyers_and_users(request):
     context = {
         "query": query,
         "sort": sort,
+        "user": user,
     }
 
     # =========================
@@ -238,8 +239,11 @@ def profile_lawyer(request, username):
                 "is_my_lawyer": bool(relation),
                 "is_limit_reached": True,
                 "user": current_user,
+
                 "error": "Вы достигли лимита адвокатов"
             }
+
+
             return render(request, "paintings/profile_lawyer.html", context)
 
         # 🚫 у адвоката нет мест
@@ -1002,6 +1006,7 @@ def profile_view(request):
     if user_id:
         user = User.objects.filter(id=user_id).first()
         isAuthenticated = user.is_authenticated
+    user.handle_subscription()
 
     # --- Сводная аналитика ---
     total_ai_requests = OTVET_REQUEST.objects.filter(user=user).count()
@@ -1395,6 +1400,8 @@ def login_view(request):
                 user = User.objects.get(username=form.cleaned_data['username'])
                 if user.check_password(form.cleaned_data['password']):
                     request.session['user_id'] = user.id
+                    user.last_login = timezone.now()
+                    user.save()
                     messages.success(request, f"Добро пожаловать, {user.username}!")
                     # Очистка попыток при успешном входе
                     request.session['login_attempts'] = []
@@ -1531,7 +1538,9 @@ def password_reset_confirm_view(request, user_id):
 
 
 def registration_view(request):
+
     if request.method == 'POST':
+        
         form = RegistrationForm(request.POST,request=request)
 
         if form.is_valid():
@@ -1632,7 +1641,7 @@ def verify_email_view(request):
     else:
         form = VerifyEmailForm(request=request)
 
-    return render(request, 'paintings/verify_email.html', {'form': form})
+    return render(request, 'paintings/verify_email.html', {'form': form,})
 
 def delete_account_view(request):
     user_id = request.session.get('user_id')
@@ -1809,12 +1818,16 @@ def ai_advocate(request):
                 user = None
 
 # сохраняем историю запроса
-            OTVET_REQUEST.objects.create(
-                user=user,                  # обязательно ключевое слово
-                user_question=question,
-                answer=answer_obj,           # может быть None
-                accuracy=accuracy
-)
+            request_obj = None
+
+            if user:
+                request_obj = OTVET_REQUEST.objects.create(
+                    user=user,
+                    user_question=question,
+                    answer=answer_obj,
+                    accuracy=accuracy
+                )
+                
         # формируем ответ
         if answer_obj:
             laws = [{"title": law.title, "link": law.original_link, "internal_link": reverse('zakon_detail', args=[law.pk])} for law in answer_obj.laws.all()]
@@ -1825,7 +1838,12 @@ def ai_advocate(request):
             
         
 
-        return JsonResponse({"answer": answer_text, "laws": laws, "accuracy": accuracy})
+        return JsonResponse({
+            "answer": answer_text,
+            "laws": laws,
+            "accuracy": accuracy,
+            "request_id": request_obj.id if request_obj else None
+        })
     
      
     # GET-запрос — рендер страницы с историей
@@ -1859,7 +1877,32 @@ def ai_advocate(request):
             })
 
     return render(request, "paintings/aiadvocat.html", {"history": history, "user_authenticated": bool(user),"user":user})
+@csrf_exempt
+def save_rating(request):
 
+    if request.method == "POST":
+
+        data = json.loads(request.body)
+
+        request_id = data.get("request_id")
+        rating = data.get("rating")
+
+        try:
+            req = OTVET_REQUEST.objects.get(id=request_id)
+
+            req.rating = rating
+            req.save()
+
+            return JsonResponse({"status": "ok"})
+
+        except OTVET_REQUEST.DoesNotExist:
+
+            return JsonResponse({
+                "status": "error",
+                "message": "Request not found"
+            })
+
+    return JsonResponse({"status": "invalid"})
 
 
 
@@ -1924,7 +1967,7 @@ def analytics_view(request):
         "top_ai_categories": top_ai_categories,
     })
 
-
+from .metrics import *
 
 def admin_panel(request):
     user = None
@@ -2001,7 +2044,16 @@ def admin_panel(request):
     zakon_form = ZakonForm()
     otvet_form = OtvetForm()
     categories = Zakon_sbornik.objects.values_list('category', flat=True).distinct()
-    
+    metrics_context = {
+        "north_star": monthly_registered_queries(),
+        "mau": get_mau(),
+        "d30": d30_retention(),
+        "activation": activation_rate(),
+        "conversion": conversion_rate(),
+        "questions_per_mau": questions_per_mau(),
+        "ai_satisfaction": ai_satisfaction_rate(),
+    }
+
     return render(request, 'paintings/admin_panel.html', {
         'zakons': zakons,
         'otvets': otvets,
@@ -2013,6 +2065,7 @@ def admin_panel(request):
         'otvet_keyword': otvet_keyword,
         'otvet_zakon_id': otvet_zakon_id,
         'section': section,
+        **metrics_context,
     })
 
 
@@ -2062,3 +2115,60 @@ def edit_otvet(request, pk):
     if form.is_valid():
         form.save()
     return redirect('admin_panel')
+
+
+def subscribe(request, level):
+
+    user = None
+    user_id = request.session.get('user_id')
+    if user_id:
+        user = User.objects.filter(id=user_id).first()
+
+    user.activate_subscription(level)
+    messages.success(
+            request,
+            f"Подписка «{level}» успешно оформлена "
+        )
+    return redirect("profile")
+
+
+
+def custom_404(request, exception):
+    return render(request, 'paintings/404.html', status=404)
+def custom_500(request):
+    return render(request, 'paintings/500.html', status=500)
+def subscriptions_page(request):
+    user=None
+    user_id = request.session.get('user_id')
+
+    if not user_id:
+        messages.error(request, "Сначала войдите в систему, что бы получить доступ к своим подпискам!")
+        return redirect('login')
+
+    user = User.objects.get(id=user_id)
+    context = {
+        "user": user,
+        "subscription_level": user.subscription_level,
+    }
+
+    return render(request, 'paintings/subscriptions.html', context)
+
+def cancel_subscription(request):
+
+    if request.method != "POST":
+        return redirect("subscriptions")
+
+    user_id = request.session.get("user_id")
+
+    if not user_id:
+        return redirect("login")
+
+    try:
+        user = User.objects.get(id=user_id)
+    except User.DoesNotExist:
+        return redirect("login")
+
+    # 🔥 вызываем метод модели
+    user.cancel_subscription()
+    messages.success(request, "Подписка успешна отменена")
+    return redirect("profile")
